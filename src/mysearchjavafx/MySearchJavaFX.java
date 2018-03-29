@@ -5,7 +5,7 @@
  */
 package mysearchjavafx;
 
-import java.util.Optional;
+//import java.util.Optional;
 import java.util.ArrayList;
 
 import javafx.application.*;
@@ -16,8 +16,10 @@ import javafx.scene.control.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
 import javafx.scene.image.*;
-import javafx.scene.input.KeyCombination;
-//import javafx.geometry.*;
+import javafx.scene.input.*;
+import javafx.collections.*;
+import javafx.scene.control.cell.*;
+import javafx.geometry.*;
 
 /**
  *
@@ -27,19 +29,61 @@ public class MySearchJavaFX extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        ArrayList<Person> arrayAboutStudent = new ArrayList();
+        ArrayList<Student> arrayAboutStudent = new ArrayList();
         
-        TableView<Person> curentTable = new TableView();
-        TableColumn[] tableColumns = new TableColumn[7];
-        /*for(int iter = 0; iter <=){
-            
-        }*/
+        TableView<StudentTableClass> curentTable = new TableView();     
+        TableColumn studentsName = new TableColumn("Students full name");
+        TableColumn fatherName = new TableColumn("Father full name");
+        TableColumn fatherSalary = new TableColumn("Father salary");
+        TableColumn motherName = new TableColumn("Mother full name");
+        TableColumn motherSalary = new TableColumn("Mother salary");
+        TableColumn numberOfBrothers = new TableColumn("Number of brothers");
+        TableColumn numberOfSisters = new TableColumn("Number of sisters");
+        
+        curentTable.getColumns().addAll(
+                studentsName,
+                fatherName,
+                fatherSalary,
+                motherName,
+                motherSalary,
+                numberOfBrothers,
+                numberOfSisters
+        );
+        
+        ObservableList<TableColumn<StudentTableClass,?>> tableColumns = curentTable.getColumns();
+        for(int iter = 0; iter < tableColumns.size(); iter++)
+            tableColumns.get(iter).setMinWidth(195);
+        
+        studentsName.setCellValueFactory(
+                new PropertyValueFactory<StudentTableClass, String>("studentsFIO")
+        );
+        fatherName.setCellValueFactory(
+                new PropertyValueFactory<StudentTableClass, String>("fatherFIO")
+        );
+        fatherSalary.setCellValueFactory(
+                new PropertyValueFactory<StudentTableClass, String>("fatherSalary")
+        );
+        motherName.setCellValueFactory(
+                new PropertyValueFactory<StudentTableClass, String>("motherFIO")
+        );
+        motherSalary.setCellValueFactory(
+                new PropertyValueFactory<StudentTableClass, String>("motherSalary")
+        );
+        numberOfBrothers.setCellValueFactory(
+                new PropertyValueFactory<StudentTableClass, String>("numberOfBrothers")
+        );
+        numberOfSisters.setCellValueFactory(
+                new PropertyValueFactory<StudentTableClass, String>("numberOfSisters")
+        );
+        
+        ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList();
+        curentTable.setItems(tableList);
         
         Button toolAddButton = new Button();
         Image imagePlus = new Image(getClass().getResourceAsStream("plus.png"));
         toolAddButton.setGraphic(new ImageView(imagePlus));
         toolAddButton.setOnAction(event -> {         
-            String studentFirstName = newAddingDialog(
+            /*String studentFirstName = newAddingDialog(
                     "Please write students first name",
                     "First name:"
             );
@@ -85,9 +129,9 @@ public class MySearchJavaFX extends Application {
             );
             if(fatherLastName == null)
                 return;
-            System.out.println(fatherLastName);
+            System.out.println(fatherLastName);*/
             
-            /*Stage curentDialogStage = new Stage();
+            Stage curentDialogStage = new Stage();
             
             Label studentFirstNameLabel = new Label("Student first name");
             TextField studentFirstNameTextField = new TextField();        
@@ -117,7 +161,7 @@ public class MySearchJavaFX extends Application {
             
             Button curentDialogOk = new Button("OK");
             curentDialogOk.setOnAction(action ->{
-                String studentFirstName = studentFirstNameTextField.getText();
+                /*String studentFirstName = studentFirstNameTextField.getText();
                 String studentSurName = studentSurNameTextField.getText();
                 String studentLastName = studentLastNameTextField.getText();
                 PeopleFio studentFio = new PeopleFio(studentFirstName, studentSurName, studentLastName);
@@ -138,7 +182,7 @@ public class MySearchJavaFX extends Application {
                 );
                 arrayAboutStudent.add(informationAboutNewStudent);
                 System.out.println("All right");
-                curentDialogStage.close();
+                curentDialogStage.close();*/
             });
             
             Button curentDialogCancel = new Button("Cancel");
@@ -160,19 +204,21 @@ public class MySearchJavaFX extends Application {
             curentDialogStage.initStyle(StageStyle.UTILITY);
             curentDialogStage.setTitle("Information about new student");
             curentDialogStage.setScene(curentDialogScene);
-            curentDialogStage.show();*/
+            curentDialogStage.show();
 
             
         });
         
+        Button toolDeleteButton = new Button();
+        /*Image imageDelete = new Image(getClass().getResourceAsStream("delete.png"));
+        toolDeleteButton.setGraphic(new ImageView(imageDelete));*/
+        
         ToolBar toolBar = new ToolBar();
         toolBar.getItems().addAll(new Separator(),
                 toolAddButton,
+                toolDeleteButton,
                 new Separator()
         );
-        //toolBar.orientationProperty(); //развернуть по вертикали
-        //посмотреть, что можно добавлять в меню
-        //привязать событие кнопки addButton к "кнопке" меню
         
         MenuBar menuBar = new MenuBar();
         Menu fileMenu = new Menu("File");
@@ -182,11 +228,14 @@ public class MySearchJavaFX extends Application {
         MenuItem menuRemoveButton = new MenuItem("Remove");
         MenuItem menuSaveButton = new MenuItem("Save");
         MenuItem menuLoadButton = new MenuItem("Load");
+        
         menuAddButton.setOnAction(toolAddButton.getOnAction());
+        
         menuAddButton.setAccelerator(KeyCombination.keyCombination("Ctrl+A"));
         menuRemoveButton.setAccelerator(KeyCombination.keyCombination("Ctrl+R"));
         menuSaveButton.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
         menuLoadButton.setAccelerator(KeyCombination.keyCombination("Ctrl+L"));
+        
         fileMenu.getItems().addAll(menuSaveButton, menuLoadButton);
         editMenu.getItems().addAll(menuAddButton, menuRemoveButton);
         menuBar.getMenus().addAll(editMenu, fileMenu);
@@ -198,12 +247,17 @@ public class MySearchJavaFX extends Application {
         AnchorPane.setTopAnchor(toolBar, 25.0);
         AnchorPane.setLeftAnchor(toolBar, 0.0);
         AnchorPane.setRightAnchor(toolBar, 0.0);
-        root.getChildren().addAll(menuBar, toolBar);
+        AnchorPane.setTopAnchor(curentTable, 64.0);
+        AnchorPane.setLeftAnchor(curentTable, 0.0);
+        AnchorPane.setRightAnchor(curentTable, 0.0);
+        AnchorPane.setBottomAnchor(curentTable, 25.0);
+        root.getChildren().addAll(menuBar, toolBar, curentTable);
         
         Scene scene = new Scene(root, 600, 500);
         
         primaryStage.setTitle("My student list");
         primaryStage.setScene(scene);
+        primaryStage.setFullScreen(true);
         primaryStage.show();
     }
 
@@ -221,7 +275,7 @@ public class MySearchJavaFX extends Application {
         return hBox;
     }
     
-    private String newAddingDialog(String headerText, String contentText){
+    /*private String newAddingDialog(String headerText, String contentText){
         Optional<String> resultOfCurrentDialog;
         TextInputDialog dialog = new TextInputDialog();
             dialog.setTitle("JavaFX");
@@ -235,6 +289,6 @@ public class MySearchJavaFX extends Application {
             }
             else
                 return null;
-    }
+    }*/
     
 }
