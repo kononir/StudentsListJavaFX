@@ -7,7 +7,6 @@ package mysearchjavafx;
 
 //import java.util.Optional;
 import java.util.ArrayList;
-import java.lang.Integer;
 
 import javafx.application.*;
 //import javafx.geometry.Pos;
@@ -33,13 +32,13 @@ public class MySearchJavaFX extends Application {
         ArrayList<Student> studentsArray = new ArrayList();
         
         TableView<StudentTableClass> curentTable = new TableView();     
-        TableColumn studentsName = new TableColumn("Students full name");
-        TableColumn fatherName = new TableColumn("Father full name");
-        TableColumn fatherSalary = new TableColumn("Father salary");
-        TableColumn motherName = new TableColumn("Mother full name");
-        TableColumn motherSalary = new TableColumn("Mother salary");
-        TableColumn numberOfBrothers = new TableColumn("Number of brothers");
-        TableColumn numberOfSisters = new TableColumn("Number of sisters");
+        TableColumn<StudentTableClass, String> studentsName = new TableColumn("Students full name");
+        TableColumn<StudentTableClass, String> fatherName = new TableColumn("Father full name");
+        TableColumn<StudentTableClass, String> fatherSalary = new TableColumn("Father salary");
+        TableColumn<StudentTableClass, String> motherName = new TableColumn("Mother full name");
+        TableColumn<StudentTableClass, String> motherSalary = new TableColumn("Mother salary");
+        TableColumn<StudentTableClass, String> numberOfBrothers = new TableColumn("Number of brothers");
+        TableColumn<StudentTableClass, String> numberOfSisters = new TableColumn("Number of sisters");
         
         curentTable.getColumns().addAll(
                 studentsName,
@@ -56,25 +55,25 @@ public class MySearchJavaFX extends Application {
             tableColumns.get(iter).setMinWidth(195);
         
         studentsName.setCellValueFactory(
-                new PropertyValueFactory<StudentTableClass, String>("studentsFIO")
+                new PropertyValueFactory<>("studentsFIO")
         );
         fatherName.setCellValueFactory(
-                new PropertyValueFactory<StudentTableClass, String>("fatherFIO")
+                new PropertyValueFactory<>("fatherFIO")
         );
         fatherSalary.setCellValueFactory(
-                new PropertyValueFactory<StudentTableClass, String>("fatherSalary")
+                new PropertyValueFactory<>("fatherSalary")
         );
         motherName.setCellValueFactory(
-                new PropertyValueFactory<StudentTableClass, String>("motherFIO")
+                new PropertyValueFactory<>("motherFIO")
         );
         motherSalary.setCellValueFactory(
-                new PropertyValueFactory<StudentTableClass, String>("motherSalary")
+                new PropertyValueFactory<>("motherSalary")
         );
         numberOfBrothers.setCellValueFactory(
-                new PropertyValueFactory<StudentTableClass, String>("numberOfBrothers")
+                new PropertyValueFactory<>("numberOfBrothers")
         );
         numberOfSisters.setCellValueFactory(
-                new PropertyValueFactory<StudentTableClass, String>("numberOfSisters")
+                new PropertyValueFactory<>("numberOfSisters")
         );
         
         ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList();
