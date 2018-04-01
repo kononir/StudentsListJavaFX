@@ -76,7 +76,8 @@ public class MySearchJavaFX extends Application {
                 new PropertyValueFactory<>("numberOfSisters")
         );
         
-        ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList();
+        StudentTableClass std = new StudentTableClass("1","1","1","1","1","1","1");
+        ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList(std);
         curentTable.setItems(tableList);
         
         Button toolAddButton = new Button();

@@ -8,7 +8,7 @@
   </information>
   <resources>
     <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se"/>
-    <jar href="MySearchJavaFX.jar" size="6964" download="eager" />
+    <jar href="MySearchJavaFX.jar" size="11177" download="eager" />
   </resources>
   <applet-desc  width="800" height="600" main-class="com.javafx.main.NoJavaFXFallback"  name="MySearchJavaFX" >
     <param name="requiredFXVersion" value="8.0+"/>

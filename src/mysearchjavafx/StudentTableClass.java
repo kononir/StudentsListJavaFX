@@ -9,24 +9,24 @@ package mysearchjavafx;
  *
  * @author Vlad
  */
-public class PersonTableClass {
+public class StudentTableClass {
     final private String studentsFIO;
     final private String fatherFIO;
-    final private double fatherSalary;
+    final private String fatherSalary;
     final private String motherFIO;
-    final private double motherSalary;
-    final private int numberOfBrothers;
-    final private int numberOfSisters;
-    public PersonTableClass(
-            String studentsFIO,
-            String fatherFIO,
-            double fatherSalary,
-            String motherFIO,
-            double motherSalary,
-            int numberOfBrothers, 
-            int numberOfSisters
-            ){
-        this.studentsFIO = studentsFIO; //пересмотреть копирование
+    final private String motherSalary;
+    final private String numberOfBrothers;
+    final private String numberOfSisters;
+    public StudentTableClass(
+            String studentsFIO, 
+            String fatherFIO, 
+            String fatherSalary, 
+            String motherFIO, 
+            String motherSalary, 
+            String numberOfBrothers, 
+            String numberOfSisters
+    ){
+        this.studentsFIO = studentsFIO;
         this.fatherFIO = fatherFIO;
         this.fatherSalary = fatherSalary;
         this.motherFIO = motherFIO;
