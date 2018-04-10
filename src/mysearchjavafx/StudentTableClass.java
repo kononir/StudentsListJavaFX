@@ -34,4 +34,25 @@ public class StudentTableClass {
         this.numberOfBrothers = numberOfBrothers;
         this.numberOfSisters = numberOfSisters;
     }
+    public String getStudentsFIO(){
+        return studentsFIO;
+    }
+    public String getFatherFIO(){
+        return fatherFIO;
+    }
+    public String getFatherSalary(){
+        return fatherSalary;
+    }
+    public String getMotherFIO(){
+        return motherFIO;
+    }
+    public String getMotherSalary(){
+        return motherSalary;
+    }
+    public String getNumberOfBrothers(){
+        return numberOfBrothers;
+    }
+    public String getNumberOfSisters(){
+        return numberOfSisters;
+    }
 }
