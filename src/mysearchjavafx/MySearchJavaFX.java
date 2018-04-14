@@ -22,6 +22,7 @@ import javafx.scene.control.cell.*;
 import javafx.geometry.*;
 
 import org.w3c.dom.*;
+import javax.xml.parsers.*;
 
 import model.*;
 
@@ -338,7 +339,13 @@ public class MySearchJavaFX extends Application {
         
         Button saveButton = new Button();
         saveButton.setOnAction(action -> {
-            
+            try{
+                DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
+                DocumentBuilder docBuilder = docBuilderFact.newDocumentBuilder();
+                Document document = docBuilder.newDocument();
+            } catch(ParserConfigurationException e){
+                e.printStackTrace();
+            }
         });
         
         ToolBar toolBar = new ToolBar();
