@@ -19,8 +19,8 @@ public class Person {
             String lastName
     ){    
         this.firstName = firstName;
-        this.lastName = surName;
-        this.surName = lastName;
+        this.lastName = lastName;
+        this.surName = surName;
     }
     
     public String getFirstName(){

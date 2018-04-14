@@ -20,6 +20,8 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.collections.*;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.control.cell.*;
 import javafx.geometry.*;
 
@@ -175,8 +177,8 @@ public class MySearchJavaFX extends Application {
                 int motherSalaryRubles = Integer.parseInt(motherSalaryRublesTextField.getText());
                 int motherSalaryPenny = Integer.parseInt(motherSalaryPennyTextField.getText());  
                 MoneyBr mSalary = new MoneyBr(motherSalaryRubles,motherSalaryPenny);
-                model.Parent father = new model.Parent(studentFirstName, studentSurName, studentLastName, fSalary);
-                model.Parent mother = new model.Parent(studentFirstName, studentSurName, studentLastName, mSalary);
+                model.Parent father = new model.Parent(fatherFirstName, fatherSurName, fatherLastName, fSalary);
+                model.Parent mother = new model.Parent(motherFirstName, motherSurName, motherLastName, mSalary);
                 int numOfBrothers = Integer.parseInt(numberOfBrothersTextField.getText());
                 int numOfSisters = Integer.parseInt(numberOfSistersTextField.getText());       
                 Student informationAboutNewStudent = new Student(
@@ -293,13 +295,7 @@ public class MySearchJavaFX extends Application {
         Image imageSave = new Image(getClass().getResourceAsStream("save.png"));
         toolSaveButton.setGraphic(new ImageView(imageSave));
         toolSaveButton.setOnAction(action -> {
-            FileChooser fileChoose = new FileChooser();
-            fileChoose.setTitle("Choose directory");
-            fileChoose.setInitialDirectory(new File(System.getProperty("user.home")));
-            
-            FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");
-            fileChoose.getExtensionFilters().add(extensionFilter);
-            
+            FileChooser fileChoose = configureFileChooser();          
             File saveFile = fileChoose.showSaveDialog(primaryStage);
             if(saveFile != null){
                 String Path = saveFile.getAbsolutePath();
@@ -309,8 +305,16 @@ public class MySearchJavaFX extends Application {
         });
         
         Button toolLoadButton = new Button();
-        toolLoadButton.setOnAction(action -> {
-            
+        toolLoadButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent action) {
+                FileChooser fileChoose = configureFileChooser();
+                String Path = fileChoose.getInitialFileName();
+                if(Path != null){
+                    FileWork parserSAX = new FileWork(Path);
+                    studentsArray = parserSAX.loadDocument(Path);
+                }
+            }
         });
         
         ToolBar toolBar = new ToolBar();
@@ -380,6 +384,16 @@ public class MySearchJavaFX extends Application {
         hBox.setSpacing(spacingNumber);
         hBox.getChildren().addAll(node1, node2);
         return hBox;
+    }
+    
+    private FileChooser configureFileChooser(){
+        FileChooser fileChoose = new FileChooser();
+        fileChoose.setTitle("Choose path");
+        fileChoose.setInitialDirectory(new File(System.getProperty("user.home")));
+
+        FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");
+        fileChoose.getExtensionFilters().add(extensionFilter);
+        return fileChoose;
     }
     
 }

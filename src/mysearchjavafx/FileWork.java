@@ -26,27 +26,28 @@ import model.*;
 public class FileWork {
     private String PATH;
     private Document document;
+    private ArrayList<Student> students;
     
-    private void newFIO(Person person, Element personElement){
-        Element firstNameElement = document.createElement("firstName");
+    private void newFIO(Person person, Element personElement, String personName){
+        Element firstNameElement = document.createElement(personName + "FirstName");
         firstNameElement.setTextContent(person.getFirstName());
         personElement.appendChild(firstNameElement);
-        Element surnameElement = document.createElement("surname");
+        Element surnameElement = document.createElement(personName + "Surname");
         surnameElement.setTextContent(person.getSurName());
         personElement.appendChild(surnameElement);
-        Element lastNameElement = document.createElement("lastName");
+        Element lastNameElement = document.createElement(personName + "LastName");
         lastNameElement.setTextContent(person.getLastName());
         personElement.appendChild(lastNameElement);
     }
     
-    private void newSalary(Parent parent, Element personElement){
+    private void newSalary(Parent parent, Element parentElement, String parentName){
         MoneyBr salary = parent.getEarnMoney();
-        Element salaryElement = document.createElement("salary");
-        personElement.appendChild(salaryElement);
-        Element rublesElement = document.createElement("rubles");
+        Element salaryElement = document.createElement(parentName + "Salary");
+        parentElement.appendChild(salaryElement);
+        Element rublesElement = document.createElement(parentName + "Rubles");
         rublesElement.setTextContent(String.valueOf(salary.getRubles()));
         salaryElement.appendChild(rublesElement);
-        Element pennyElement = document.createElement("penny");
+        Element pennyElement = document.createElement(parentName + "Penny");
         pennyElement.setTextContent(String.valueOf(salary.getPenny()));
         salaryElement.appendChild(pennyElement);
     }
@@ -84,19 +85,19 @@ public class FileWork {
             studentsArray.forEach((student) -> {
                 Element studentElement = document.createElement("student");
                 studentsElement.appendChild(studentElement);
-                newFIO(student, studentElement);
+                newFIO(student, studentElement, "student");
                 
                 Parent father = student.getFather();
                 Element fatherElement = document.createElement("father");
                 studentElement.appendChild(fatherElement);
-                newFIO(father, fatherElement);
-                newSalary(father, fatherElement);
+                newFIO(father, fatherElement, "father");
+                newSalary(father, fatherElement, "father");
                 
                 Parent mother = student.getMother();
                 Element motherElement = document.createElement("mother");
                 studentElement.appendChild(motherElement);
-                newFIO(mother, motherElement);
-                newSalary(mother, motherElement);
+                newFIO(mother, motherElement, "mother");
+                newSalary(mother, motherElement, "mother");
                 
                 Element numberOfBrothersElement = document.createElement("numberOfBrothers");
                 numberOfBrothersElement.setTextContent(String.valueOf(student.getNumberOfBrothers()));
@@ -114,57 +115,139 @@ public class FileWork {
         }
     }
     
-    public void loadDocument(){
-        DefaultHandler handler = new DefaultHandler(){
-            //boolean tagStart = false;
-            ArrayList<Student> HBoxesOfCurrentDialog = new ArrayList();
-            Student currentStudent;
-            Parent currentFather;
-            Parent currentMother;
-            MoneyBr currentFatherSalary;
-            MoneyBr currentMotherSalary;
-            String currentQName;
-            String currentUri;
-            
-            @Override
-            public void startDocument() throws SAXException{
-                System.out.println("Start analysis");
+    DefaultHandler handler = new DefaultHandler(){
+        String currentQName;
+
+        Student student;
+        String studentFirstName;
+        String studentSurname;
+        String studentLastName;
+        String fatherFirstName;
+        String fatherSurname;
+        String fatherLastName;
+        int fatherRubles;
+        int fatherPenny;
+        String motherFirstName;
+        String motherSurname;
+        String motherLastName;
+        int motherRubles;
+        int motherPenny;
+        int numberOfBrothers;
+        int numberOfSisters;
+        Parent mother;
+        Parent father;
+
+        @Override
+        public void startDocument() throws SAXException{
+            System.out.println("Start analysis");
+            students = new ArrayList();
+        }
+        @Override
+        public void endDocument() throws SAXException{
+            System.out.println("Finish analysis");
+        }
+        @Override
+        public void startElement(String uri, String localName, 
+                String qName, Attributes attributes)
+                throws SAXException
+        {
+            currentQName = qName;
+        }
+        @Override
+        public void characters(char ch[], int start, int length)
+                throws SAXException
+        {
+            switch(currentQName){
+                case "studentFirstName":
+                    studentFirstName = new String(ch, start, length);
+                    break;    
+                case "studentSurname":
+                    studentSurname = new String(ch, start, length);
+                    break;
+                case "studentLastName":
+                    studentLastName = new String(ch, start, length);
+                    break;
+                case "fatherFirstName":
+                    fatherFirstName = new String(ch, start, length);
+                    break;    
+                case "fatherSurname":
+                    fatherSurname = new String(ch, start, length);
+                    break;
+                case "fatherLastName":
+                    fatherLastName = new String(ch, start, length);
+                    break;
+                case "fatherRubles":
+                    fatherRubles = new Integer(new String(ch, start, length));
+                    break;    
+                case "fatherPenny":
+                    fatherPenny = new Integer(new String(ch, start, length));
+                    MoneyBr fatherSalary = new MoneyBr(fatherRubles, fatherPenny);
+                    father = new Parent(
+                            fatherFirstName, 
+                            fatherSurname,
+                            fatherLastName,
+                            fatherSalary
+                    );
+                    break;
+                case "motherFirstName":
+                    motherFirstName = new String(ch, start, length);
+                    break;
+                case "motherSurname":
+                    motherSurname = new String(ch, start, length);
+                    break;    
+                case "motherLastName":
+                    motherLastName = new String(ch, start, length);
+                    break;
+                case "motherRubles":
+                    motherRubles = new Integer(new String(ch, start, length));
+                    break;
+                case "motherPenny":
+                    motherPenny = new Integer(new String(ch, start, length));
+                    MoneyBr motherSalary = new MoneyBr(motherRubles, motherPenny);
+                    mother = new Parent(
+                            motherFirstName, 
+                            motherSurname,
+                            motherLastName,
+                            motherSalary
+                    );
+                    break;   
+                case "numberOfBrothers":
+                    numberOfBrothers = new Integer(new String(ch, start, length));
+                    break;
+                case "numberOfSisters":
+                    numberOfSisters = new Integer(new String(ch, start, length));
+                    student = new Student(
+                            studentFirstName,
+                            studentSurname,
+                            studentLastName,
+                            father,
+                            mother,
+                            numberOfBrothers,
+                            numberOfSisters
+                    );
+                    students.add(student);
+                    break;
+                default:
+                    break;
             }
-            @Override
-            public void endDocument() throws SAXException{
-                System.out.println("Finish analysis");
-            }
-            @Override
-            public void startElement(String uri, String localName, 
-                    String qName, Attributes attributes)
-                    throws SAXException
-            {
-                currentQName = qName;
-                currentUri = uri;
-                //tagStart = (!qName.equalsIgnoreCase("students") || !qName.equalsIgnoreCase("student"));
-            }
-            @Override
-            public void characters(char ch[], int start, int length)
-                    throws SAXException
-            {
-                switch(currentQName){
-                    case "students":
-                        break;
-                    case "student":
-                        break;
-                    case "firstName":
-                        break;    
-                    case "mother": 
-                        break;
-                }
-            }
-            @Override
-            public void endElement(String uri, String localName, String qName)
-                    throws SAXException
-            {
-                super.endElement(uri, localName, qName);
-            }
-        };
+        }
+        @Override
+        public void endElement(String uri, String localName, String qName)
+                throws SAXException
+        {
+            super.endElement(uri, localName, qName);
+        }
+    };
+    
+    public ArrayList<Student> loadDocument(String PATH){
+        try{
+            SAXParserFactory saxParserFact = SAXParserFactory.newInstance();
+            SAXParser saxParser = saxParserFact.newSAXParser();
+            saxParser.parse(PATH, handler);  
+        } catch(IOException | ParserConfigurationException | SAXException e){
+            e.printStackTrace(System.out);
+        }
+        return students;
     }
     
     public FileWork(String PATH){
