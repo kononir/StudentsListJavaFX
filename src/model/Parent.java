@@ -20,4 +20,8 @@ public class Parent extends Person {
         super(firstName, surName, lastName);
         this.earnMoney = earnMoney;
     }
+    
+    public MoneyBr getEarnMoney(){
+        return earnMoney;
+    }
 }

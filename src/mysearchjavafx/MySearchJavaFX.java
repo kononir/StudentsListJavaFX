@@ -7,6 +7,7 @@ package mysearchjavafx;
 
 import java.util.Optional;
 import java.util.ArrayList;
+import java.io.*;
 
 import javafx.application.*;
 //import javafx.geometry.Pos;
@@ -15,14 +16,12 @@ import javafx.scene.control.*;
 //import javafx.stage.StageStyle.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.collections.*;
 import javafx.scene.control.cell.*;
 import javafx.geometry.*;
-
-import org.w3c.dom.*;
-import javax.xml.parsers.*;
 
 import model.*;
 
@@ -85,56 +84,9 @@ public class MySearchJavaFX extends Application {
         curentTable.setItems(tableList);
         
         Button toolAddButton = new Button();
-        Image imagePlus = new Image(getClass().getResourceAsStream("plus.png"));
+        Image imagePlus = new Image(getClass().getResourceAsStream("add.png"));
         toolAddButton.setGraphic(new ImageView(imagePlus));
         toolAddButton.setOnAction(event -> {         
-            /*String studentFirstName = newAddingDialog(
-                    "Please write students first name",
-                    "First name:"
-            );
-            if(studentFirstName == null)
-                return;
-            System.out.println(studentFirstName);
-            
-            String studentSurName = newAddingDialog(
-                    "Please write students surname",
-                    "Surname:"
-            );
-            if(studentSurName == null)
-                return;
-            System.out.println(studentSurName);
-            
-            String studentLastName = newAddingDialog(
-                    "Please write students last name",
-                    "Last name:"
-            );
-            if(studentLastName == null)
-                return;
-            System.out.println(studentLastName);
-            
-            String fatherFirstName = newAddingDialog(
-                    "Please write fathers first name",
-                    "First name:"
-            );
-            if(fatherFirstName == null)
-                return;
-            System.out.println(fatherFirstName);
-            
-            String fatherSurname = newAddingDialog(
-                    "Please write fathers surname",
-                    "Surname:"
-            );
-            if(fatherSurname == null)
-                return;
-            System.out.println(fatherSurname);
-            
-            String fatherLastName = newAddingDialog(
-                    "Please write fathers last name",
-                    "Last name:"
-            );
-            if(fatherLastName == null)
-                return;
-            System.out.println(fatherLastName);*/
             
             Stage curentDialogStage = new Stage();
             
@@ -337,15 +289,28 @@ public class MySearchJavaFX extends Application {
             ArrayList<HBox> HBoxesOfCurrentDialog = new ArrayList();*/
         });
         
-        Button saveButton = new Button();
-        saveButton.setOnAction(action -> {
-            try{
-                DocumentBuilderFactory docBuilderFact = DocumentBuilderFactory.newInstance();
-                DocumentBuilder docBuilder = docBuilderFact.newDocumentBuilder();
-                Document document = docBuilder.newDocument();
-            } catch(ParserConfigurationException e){
-                e.printStackTrace();
+        Button toolSaveButton = new Button();
+        Image imageSave = new Image(getClass().getResourceAsStream("save.png"));
+        toolSaveButton.setGraphic(new ImageView(imageSave));
+        toolSaveButton.setOnAction(action -> {
+            FileChooser fileChoose = new FileChooser();
+            fileChoose.setTitle("Choose directory");
+            fileChoose.setInitialDirectory(new File(System.getProperty("user.home")));
+            
+            FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");
+            fileChoose.getExtensionFilters().add(extensionFilter);
+            
+            File saveFile = fileChoose.showSaveDialog(primaryStage);
+            if(saveFile != null){
+                String Path = saveFile.getAbsolutePath();
+                FileWork parserDOM = new FileWork(Path); // + "students.xml"
+                parserDOM.saveDocument(studentsArray, Path);
             }
+        });
+        
+        Button toolLoadButton = new Button();
+        toolLoadButton.setOnAction(action -> {
+            
         });
         
         ToolBar toolBar = new ToolBar();
@@ -353,7 +318,8 @@ public class MySearchJavaFX extends Application {
                 toolAddButton,
                 toolDeleteButton,
                 toolSearchButton,
-                new Separator()
+                new Separator(),
+                toolSaveButton
         );
         
         MenuBar menuBar = new MenuBar();
@@ -367,6 +333,7 @@ public class MySearchJavaFX extends Application {
         MenuItem menuLoadButton = new MenuItem("Load");
         
         menuAddButton.setOnAction(toolAddButton.getOnAction());
+        menuSaveButton.setOnAction(toolSaveButton.getOnAction());
         
         menuAddButton.setAccelerator(KeyCombination.keyCombination("Ctrl+A"));
         menuRemoveButton.setAccelerator(KeyCombination.keyCombination("Ctrl+R"));
@@ -377,7 +344,7 @@ public class MySearchJavaFX extends Application {
         editMenu.getItems().addAll(menuAddButton, menuRemoveButton, menuSearchButton);
         menuBar.getMenus().addAll(editMenu, fileMenu);
         
-        AnchorPane root = new AnchorPane();
+        AnchorPane anchorPane = new AnchorPane();
         AnchorPane.setTopAnchor(menuBar, 0.0);
         AnchorPane.setLeftAnchor(menuBar, 0.0);
         AnchorPane.setRightAnchor(menuBar, 0.0);
@@ -388,13 +355,16 @@ public class MySearchJavaFX extends Application {
         AnchorPane.setLeftAnchor(curentTable, 0.0);
         AnchorPane.setRightAnchor(curentTable, 0.0);
         AnchorPane.setBottomAnchor(curentTable, 25.0);
-        root.getChildren().addAll(menuBar, toolBar, curentTable);
+        anchorPane.getChildren().addAll(menuBar, toolBar, curentTable);
         
-        Scene scene = new Scene(root, 600, 500);
+        ScrollPane scroll = new ScrollPane();
+        scroll.setContent(anchorPane);
+        scroll.setPannable(true);
+        
+        Scene scene = new Scene(scroll, 600, 500);
         
         primaryStage.setTitle("My student list");
         primaryStage.setScene(scene);
-        primaryStage.setFullScreen(true);
         primaryStage.show();
     }
 
@@ -411,21 +381,5 @@ public class MySearchJavaFX extends Application {
         hBox.getChildren().addAll(node1, node2);
         return hBox;
     }
-    
-    /*private String newAddingDialog(String headerText, String contentText){
-        Optional<String> resultOfCurrentDialog;
-        TextInputDialog dialog = new TextInputDialog();
-            dialog.setTitle("JavaFX");
-            dialog.setHeaderText(headerText);
-            dialog.setContentText(contentText);
-            String inputInformation;
-            resultOfCurrentDialog = dialog.showAndWait();
-            if(resultOfCurrentDialog.isPresent()){
-                inputInformation = resultOfCurrentDialog.get();
-                return inputInformation;
-            }
-            else
-                return null;
-    }*/
     
 }

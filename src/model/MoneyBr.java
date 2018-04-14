@@ -16,4 +16,11 @@ public class MoneyBr {
         this.rubles = rubles;
         this.penny = penny;
     }
+    
+    public int getRubles(){
+        return rubles;
+    }
+    public int getPenny(){
+        return penny;
+    }
 }

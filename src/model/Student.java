@@ -29,4 +29,17 @@ public class Student extends Person {
         this.numberOfBrothers = numberOfBrothers;
         this.numberOfSisters = numberOfSisters;
     }
+    
+    public Parent getFather(){
+        return father;
+    }
+    public Parent getMother(){
+        return mother;
+    }
+    public int getNumberOfBrothers(){
+        return numberOfBrothers;
+    }
+    public int getNumberOfSisters(){
+        return numberOfSisters;
+    }
 }
