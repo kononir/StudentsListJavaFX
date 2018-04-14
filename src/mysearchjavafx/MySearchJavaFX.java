@@ -5,7 +5,7 @@
  */
 package mysearchjavafx;
 
-//import java.util.Optional;
+import java.util.Optional;
 import java.util.ArrayList;
 
 import javafx.application.*;
@@ -20,6 +20,10 @@ import javafx.scene.input.*;
 import javafx.collections.*;
 import javafx.scene.control.cell.*;
 import javafx.geometry.*;
+
+import org.w3c.dom.*;
+
+import model.*;
 
 /**
  *
@@ -76,8 +80,7 @@ public class MySearchJavaFX extends Application {
                 new PropertyValueFactory<>("numberOfSisters")
         );
         
-        StudentTableClass std = new StudentTableClass("1","1","1","1","1","1","1");
-        ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList(std);
+        ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList();
         curentTable.setItems(tableList);
         
         Button toolAddButton = new Button();
@@ -203,7 +206,7 @@ public class MySearchJavaFX extends Application {
                 curentDialogVBox.getChildren().add(HBoxesOfCurrentDialog.get(iter));
             
             Button curentDialogOk = new Button("OK");
-            curentDialogOk.setOnAction(action ->{
+            curentDialogOk.setOnAction(action -> {
                 String studentFirstName = studentFirstNameTextField.getText();
                 String studentSurName = studentSurNameTextField.getText();
                 String studentLastName = studentLastNameTextField.getText();
@@ -219,8 +222,8 @@ public class MySearchJavaFX extends Application {
                 int motherSalaryRubles = Integer.parseInt(motherSalaryRublesTextField.getText());
                 int motherSalaryPenny = Integer.parseInt(motherSalaryPennyTextField.getText());  
                 MoneyBr mSalary = new MoneyBr(motherSalaryRubles,motherSalaryPenny);
-                Parent father = new Parent(studentFirstName, studentSurName, studentLastName, fSalary);
-                Parent mother = new Parent(studentFirstName, studentSurName, studentLastName, mSalary);
+                model.Parent father = new model.Parent(studentFirstName, studentSurName, studentLastName, fSalary);
+                model.Parent mother = new model.Parent(studentFirstName, studentSurName, studentLastName, mSalary);
                 int numOfBrothers = Integer.parseInt(numberOfBrothersTextField.getText());
                 int numOfSisters = Integer.parseInt(numberOfSistersTextField.getText());       
                 Student informationAboutNewStudent = new Student(
@@ -234,12 +237,22 @@ public class MySearchJavaFX extends Application {
                 );
                 studentsArray.add(informationAboutNewStudent);
                 
+                tableList.add(new StudentTableClass(
+                        studentFirstName + " " + studentSurName + " " + studentLastName,
+                        fatherFirstName + " " + fatherSurName + " " + fatherLastName,
+                        String.valueOf(fatherSalaryRubles) + "." + String.valueOf(fatherSalaryPenny),
+                        motherFirstName + " " + motherSurName + " " + motherLastName,
+                        String.valueOf(motherSalaryRubles) + "." + String.valueOf(motherSalaryPenny),
+                        String.valueOf(numOfBrothers),
+                        String.valueOf(numOfSisters)
+                ));
+                
                 System.out.println("All right");
                 curentDialogStage.close();
             });
             
             Button curentDialogCancel = new Button("Cancel");
-            curentDialogCancel.setOnAction(action ->{
+            curentDialogCancel.setOnAction(action -> {
                 curentDialogStage.close();
             });
             
@@ -252,7 +265,7 @@ public class MySearchJavaFX extends Application {
             AnchorPane.setRightAnchor(curentDialogHBoxWithButtons, 10.0);
             curentDialogAnchorPane.getChildren().addAll(curentDialogVBox, curentDialogHBoxWithButtons);
             
-            Scene curentDialogScene = new Scene(curentDialogAnchorPane, 355, 600);
+            Scene curentDialogScene = new Scene(curentDialogAnchorPane, 390, 600);
             
             curentDialogStage.initStyle(StageStyle.UTILITY);
             curentDialogStage.setTitle("Information about new student");
@@ -261,13 +274,78 @@ public class MySearchJavaFX extends Application {
         });
         
         Button toolDeleteButton = new Button();
-        /*Image imageDelete = new Image(getClass().getResourceAsStream("delete.png"));
-        toolDeleteButton.setGraphic(new ImageView(imageDelete));*/
+        Image imageDelete = new Image(getClass().getResourceAsStream("delete.png"));
+        toolDeleteButton.setGraphic(new ImageView(imageDelete));
+        
+        Button toolSearchButton = new Button();
+        Image imageSearch = new Image(getClass().getResourceAsStream("search.png"));
+        toolSearchButton.setGraphic(new ImageView(imageSearch));
+        toolSearchButton.setOnAction(action -> {
+            ChoiceDialog<String> searchChoiceDialog = new ChoiceDialog(
+                    "Students FIO",
+                    "Father FIO",
+                    "Mother FIO",
+                    "Number of brothers",
+                    "Number of sisters",
+                    "Father salary",
+                    "Mother salary"
+            );
+            searchChoiceDialog.setTitle("JavaFX");
+            searchChoiceDialog.setHeaderText(null);
+            searchChoiceDialog.setContentText("Please, choice searching argument:");
+            
+            Optional<String> answerOptional = searchChoiceDialog.showAndWait();
+            answerOptional.ifPresent(answer -> {
+                switch(answer){
+                    case "Students FIO":
+                        Stage curentDialogStage = new Stage();
+            
+                        ArrayList<HBox> HBoxesOfCurrentDialog = new ArrayList();
+            
+                        Label studentFirstNameLabel = new Label("First name");
+                        TextField studentFirstNameTextField = new TextField();        
+                        HBoxesOfCurrentDialog.add(makeNewHBox(studentFirstNameLabel, studentFirstNameTextField, 63));
+                        
+                        Label studentSurNameLabel = new Label("Surname");
+                        TextField studentSurNameTextField = new TextField();        
+                        HBoxesOfCurrentDialog.add(makeNewHBox(studentSurNameLabel, studentSurNameTextField, 63));
+                        
+                        Label studentLastNameLabel = new Label("Last name");
+                        TextField studentLastNameTextField = new TextField();        
+                        HBoxesOfCurrentDialog.add(makeNewHBox(studentLastNameLabel, studentLastNameTextField, 63));
+                        
+                        
+                        break;
+                    case "Father FIO":
+                        break;
+                    case "Mother FIO":
+                        break;
+                    case "Number of brothers":
+                        break;
+                    case "Number of sisters":
+                        break;
+                    case "Father salary":
+                        break;
+                    case "Mother salary":
+                        break;
+                }
+            });
+            
+            /*Stage curentDialogStage = new Stage();
+            
+            ArrayList<HBox> HBoxesOfCurrentDialog = new ArrayList();*/
+        });
+        
+        Button saveButton = new Button();
+        saveButton.setOnAction(action -> {
+            
+        });
         
         ToolBar toolBar = new ToolBar();
         toolBar.getItems().addAll(new Separator(),
                 toolAddButton,
                 toolDeleteButton,
+                toolSearchButton,
                 new Separator()
         );
         
@@ -277,6 +355,7 @@ public class MySearchJavaFX extends Application {
         
         MenuItem menuAddButton = new MenuItem("Add");
         MenuItem menuRemoveButton = new MenuItem("Remove");
+        MenuItem menuSearchButton = new MenuItem("Search");
         MenuItem menuSaveButton = new MenuItem("Save");
         MenuItem menuLoadButton = new MenuItem("Load");
         
@@ -288,7 +367,7 @@ public class MySearchJavaFX extends Application {
         menuLoadButton.setAccelerator(KeyCombination.keyCombination("Ctrl+L"));
         
         fileMenu.getItems().addAll(menuSaveButton, menuLoadButton);
-        editMenu.getItems().addAll(menuAddButton, menuRemoveButton);
+        editMenu.getItems().addAll(menuAddButton, menuRemoveButton, menuSearchButton);
         menuBar.getMenus().addAll(editMenu, fileMenu);
         
         AnchorPane root = new AnchorPane();
@@ -319,7 +398,7 @@ public class MySearchJavaFX extends Application {
         launch(args);
     }
     
-    private HBox makeNewHBox(Node node1, Node node2, int spacingNumber){
+    private HBox makeNewHBox(javafx.scene.Node node1, javafx.scene.Node node2, int spacingNumber){
         HBox hBox = new HBox();
         hBox.setSpacing(spacingNumber);
         hBox.getChildren().addAll(node1, node2);

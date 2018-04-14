@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package mysearchjavafx;
+package model;
 
 /**
  *
@@ -24,7 +24,7 @@ public class Student extends Person {
             int numberOfSisters
     ){
         super(firstName, surName, lastName);
-        this.father = father; //пересмотреть копирование
+        this.father = father;
         this.mother = mother;
         this.numberOfBrothers = numberOfBrothers;
         this.numberOfSisters = numberOfSisters;
