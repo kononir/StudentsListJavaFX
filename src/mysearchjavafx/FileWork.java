@@ -104,7 +104,7 @@ public class FileWork {
                 studentElement.appendChild(numberOfBrothersElement);
                 
                 Element numberOfSistersElement = document.createElement("numberOfSisters");
-                numberOfSistersElement.setTextContent(String.valueOf(student.getNumberOfBrothers()));
+                numberOfSistersElement.setTextContent(String.valueOf(student.getNumberOfSisters()));
                 studentElement.appendChild(numberOfSistersElement);
             });
         } catch(ParserConfigurationException e){

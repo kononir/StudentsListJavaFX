@@ -37,7 +37,7 @@ public class MySearchJavaFX extends Application {
     public void start(Stage primaryStage) {
         ArrayList<Student> studentsArray = new ArrayList();
         
-        TableView<StudentTableClass> curentTable = new TableView();     
+        TableView<StudentTableClass> currentTable = new TableView();
         TableColumn<StudentTableClass, String> studentsName = new TableColumn("Students full name");
         TableColumn<StudentTableClass, String> fatherName = new TableColumn("Father full name");
         TableColumn<StudentTableClass, String> fatherSalary = new TableColumn("Father salary");
@@ -46,7 +46,7 @@ public class MySearchJavaFX extends Application {
         TableColumn<StudentTableClass, String> numberOfBrothers = new TableColumn("Number of brothers");
         TableColumn<StudentTableClass, String> numberOfSisters = new TableColumn("Number of sisters");
         
-        curentTable.getColumns().addAll(
+        currentTable.getColumns().addAll(
                 studentsName,
                 fatherName,
                 fatherSalary,
@@ -56,7 +56,7 @@ public class MySearchJavaFX extends Application {
                 numberOfSisters
         );
         
-        ObservableList<TableColumn<StudentTableClass,?>> tableColumns = curentTable.getColumns();
+        ObservableList<TableColumn<StudentTableClass,?>> tableColumns = currentTable.getColumns();
         for(int iter = 0; iter < tableColumns.size(); iter++)
             tableColumns.get(iter).setMinWidth(195);
         
@@ -83,7 +83,7 @@ public class MySearchJavaFX extends Application {
         );
         
         ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList();
-        curentTable.setItems(tableList);
+        currentTable.setItems(tableList);
         
         Button toolAddButton = new Button();
         Image imagePlus = new Image(getClass().getResourceAsStream("add.png"));
@@ -193,11 +193,16 @@ public class MySearchJavaFX extends Application {
                 studentsArray.add(informationAboutNewStudent);
                 
                 tableList.add(new StudentTableClass(
-                        studentFirstName + " " + studentSurName + " " + studentLastName,
-                        fatherFirstName + " " + fatherSurName + " " + fatherLastName,
-                        String.valueOf(fatherSalaryRubles) + "." + String.valueOf(fatherSalaryPenny),
-                        motherFirstName + " " + motherSurName + " " + motherLastName,
-                        String.valueOf(motherSalaryRubles) + "." + String.valueOf(motherSalaryPenny),
+                        studentLastName + " " + studentFirstName + " " 
+                        + studentSurName,
+                        fatherLastName + " " + fatherSurName + " "
+                        + fatherFirstName,
+                        String.valueOf(fatherSalaryRubles) + "." 
+                        + String.valueOf(fatherSalaryPenny),
+                        motherLastName + " " + motherFirstName + " "
+                        + motherSurName,
+                        String.valueOf(motherSalaryRubles) + "."
+                        + String.valueOf(motherSalaryPenny),
                         String.valueOf(numOfBrothers),
                         String.valueOf(numOfSisters)
                 ));
@@ -305,6 +310,8 @@ public class MySearchJavaFX extends Application {
         });
         
         Button toolLoadButton = new Button();
+        Image imageLoad = new Image(getClass().getResourceAsStream("load.png"));
+        toolLoadButton.setGraphic(new ImageView(imageLoad));
         toolLoadButton.setOnAction((ActionEvent action) -> {
             FileChooser fileChoose = configureFileChooser();
             File loadFile = fileChoose.showOpenDialog(primaryStage);         
@@ -367,13 +374,14 @@ public class MySearchJavaFX extends Application {
         AnchorPane.setTopAnchor(toolBar, 25.0);
         AnchorPane.setLeftAnchor(toolBar, 0.0);
         AnchorPane.setRightAnchor(toolBar, 0.0);
-        AnchorPane.setTopAnchor(curentTable, 64.0);
-        AnchorPane.setLeftAnchor(curentTable, 0.0);
-        AnchorPane.setRightAnchor(curentTable, 0.0);
-        AnchorPane.setBottomAnchor(curentTable, 25.0);
-        anchorPane.getChildren().addAll(menuBar, toolBar, curentTable);
+        AnchorPane.setTopAnchor(currentTable, 67.0);
+        AnchorPane.setLeftAnchor(currentTable, 0.0);
+        AnchorPane.setRightAnchor(currentTable, 0.0);
+        AnchorPane.setBottomAnchor(currentTable, 25.0);
+        anchorPane.getChildren().addAll(menuBar, toolBar, currentTable);
         
         ScrollPane scroll = new ScrollPane();
+        scroll.setFitToHeight(true);
         scroll.setContent(anchorPane);
         scroll.setPannable(true);
         
@@ -411,32 +419,37 @@ public class MySearchJavaFX extends Application {
     private ObservableList<StudentTableClass> makeNewTableList(ArrayList<Student> studentsArray){
         ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList();
         studentsArray.forEach ((student) -> {
-            String studentFirstName = student.getFirstName();
-            String studentSurName = student.getLastName();
-            String studentLastName = student.getSurName();
+            StringBuilder studentFIO = new StringBuilder();
+            studentFIO.append(student.getLastName()).append(" ")
+                      .append(student.getFirstName()).append(" ")
+                      .append(student.getSurName());        
             model.Parent father = student.getFather();
-            String fatherFirstName = father.getFirstName();
-            String fatherSurName = father.getLastName();
-            String fatherLastName = father.getSurName();
+            StringBuilder fatherFIO = new StringBuilder();
+            fatherFIO.append(father.getLastName()).append(" ")
+                      .append(father.getFirstName()).append(" ")
+                      .append(father.getSurName()); 
             MoneyBr fatherSalary = father.getEarnMoney();
-            int fatherSalaryRubles = fatherSalary.getRubles();
-            int fatherSalaryPenny = fatherSalary.getPenny();
+            StringBuilder fatherMoney = new StringBuilder();
+            fatherMoney.append(fatherSalary.getRubles()).append(".")
+                       .append(fatherSalary.getPenny());
             model.Parent mother = student.getMother();
-            String motherFirstName = mother.getFirstName();
-            String motherSurName = mother.getLastName();
-            String motherLastName = mother.getSurName();
+            StringBuilder motherFIO = new StringBuilder();
+            motherFIO.append(mother.getLastName()).append(" ")
+                      .append(mother.getFirstName()).append(" ")
+                      .append(mother.getSurName()); 
             MoneyBr motherSalary = mother.getEarnMoney();
-            int motherSalaryRubles = motherSalary.getRubles();
-            int motherSalaryPenny = motherSalary.getPenny();
+            StringBuilder motherMoney = new StringBuilder();
+            motherMoney.append(motherSalary.getRubles()).append(".")
+                       .append(motherSalary.getPenny());
             int numOfBrothers = student.getNumberOfBrothers();
             int numOfSisters = student.getNumberOfSisters();
              
             tableList.add(new StudentTableClass(
-                    studentFirstName + " " + studentSurName + " " + studentLastName,
-                    fatherFirstName + " " + fatherSurName + " " + fatherLastName,
-                    String.valueOf(fatherSalaryRubles) + "." + String.valueOf(fatherSalaryPenny),
-                    motherFirstName + " " + motherSurName + " " + motherLastName,
-                    String.valueOf(motherSalaryRubles) + "." + String.valueOf(motherSalaryPenny),
+                    studentFIO.toString(),
+                    fatherFIO.toString(),
+                    fatherMoney.toString(),
+                    motherFIO.toString(),
+                    motherMoney.toString(),
                     String.valueOf(numOfBrothers),
                     String.valueOf(numOfSisters)
             ));
