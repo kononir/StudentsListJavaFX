@@ -16,12 +16,12 @@ import javafx.scene.control.*;
 //import javafx.stage.StageStyle.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-import javafx.stage.FileChooser.ExtensionFilter;
+//import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+//import javafx.event.EventHandler;
 import javafx.scene.control.cell.*;
 import javafx.geometry.*;
 
@@ -298,21 +298,31 @@ public class MySearchJavaFX extends Application {
             FileChooser fileChoose = configureFileChooser();          
             File saveFile = fileChoose.showSaveDialog(primaryStage);
             if(saveFile != null){
-                String Path = saveFile.getAbsolutePath();
-                FileWork parserDOM = new FileWork(Path); // + "students.xml"
-                parserDOM.saveDocument(studentsArray, Path);
+                String path = saveFile.getAbsolutePath();
+                FileWork parserDOM = new FileWork(path); // + "students.xml"
+                parserDOM.saveDocument(studentsArray, path);
             }
         });
         
         Button toolLoadButton = new Button();
-        toolLoadButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent action) {
-                FileChooser fileChoose = configureFileChooser();
-                String Path = fileChoose.getInitialFileName();
-                if(Path != null){
-                    FileWork parserSAX = new FileWork(Path);
-                    studentsArray = parserSAX.loadDocument(Path);
+        toolLoadButton.setOnAction((ActionEvent action) -> {
+            FileChooser fileChoose = configureFileChooser();
+            File loadFile = fileChoose.showOpenDialog(primaryStage);         
+            if(loadFile != null){
+                String path = loadFile.getAbsolutePath();
+                FileWork parserSAX = new FileWork(path);
+                ArrayList<Student> newStudents = parserSAX.loadDocument(path);
+                
+                studentsArray.clear();
+                for(int iter = 0; iter < newStudents.size(); iter++){  
+                    studentsArray.add(newStudents.get(iter));
+                }
+                
+                ObservableList<StudentTableClass> newTableList = 
+                        makeNewTableList(newStudents);
+                tableList.clear();
+                for(int iter = 0; iter < newTableList.size(); iter++){  
+                    tableList.add(newTableList.get(iter));
                 }
             }
         });
@@ -323,7 +333,8 @@ public class MySearchJavaFX extends Application {
                 toolDeleteButton,
                 toolSearchButton,
                 new Separator(),
-                toolSaveButton
+                toolSaveButton,
+                toolLoadButton
         );
         
         MenuBar menuBar = new MenuBar();
@@ -338,6 +349,7 @@ public class MySearchJavaFX extends Application {
         
         menuAddButton.setOnAction(toolAddButton.getOnAction());
         menuSaveButton.setOnAction(toolSaveButton.getOnAction());
+        menuLoadButton.setOnAction(toolLoadButton.getOnAction());
         
         menuAddButton.setAccelerator(KeyCombination.keyCombination("Ctrl+A"));
         menuRemoveButton.setAccelerator(KeyCombination.keyCombination("Ctrl+R"));
@@ -394,6 +406,42 @@ public class MySearchJavaFX extends Application {
         FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");
         fileChoose.getExtensionFilters().add(extensionFilter);
         return fileChoose;
+    }
+    
+    private ObservableList<StudentTableClass> makeNewTableList(ArrayList<Student> studentsArray){
+        ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList();
+        studentsArray.forEach ((student) -> {
+            String studentFirstName = student.getFirstName();
+            String studentSurName = student.getLastName();
+            String studentLastName = student.getSurName();
+            model.Parent father = student.getFather();
+            String fatherFirstName = father.getFirstName();
+            String fatherSurName = father.getLastName();
+            String fatherLastName = father.getSurName();
+            MoneyBr fatherSalary = father.getEarnMoney();
+            int fatherSalaryRubles = fatherSalary.getRubles();
+            int fatherSalaryPenny = fatherSalary.getPenny();
+            model.Parent mother = student.getMother();
+            String motherFirstName = mother.getFirstName();
+            String motherSurName = mother.getLastName();
+            String motherLastName = mother.getSurName();
+            MoneyBr motherSalary = mother.getEarnMoney();
+            int motherSalaryRubles = motherSalary.getRubles();
+            int motherSalaryPenny = motherSalary.getPenny();
+            int numOfBrothers = student.getNumberOfBrothers();
+            int numOfSisters = student.getNumberOfSisters();
+             
+            tableList.add(new StudentTableClass(
+                    studentFirstName + " " + studentSurName + " " + studentLastName,
+                    fatherFirstName + " " + fatherSurName + " " + fatherLastName,
+                    String.valueOf(fatherSalaryRubles) + "." + String.valueOf(fatherSalaryPenny),
+                    motherFirstName + " " + motherSurName + " " + motherLastName,
+                    String.valueOf(motherSalaryRubles) + "." + String.valueOf(motherSalaryPenny),
+                    String.valueOf(numOfBrothers),
+                    String.valueOf(numOfSisters)
+            ));
+        });
+        return tableList;
     }
     
 }
