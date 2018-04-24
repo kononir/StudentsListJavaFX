@@ -304,7 +304,7 @@ public class MySearchJavaFX extends Application {
             File saveFile = fileChoose.showSaveDialog(primaryStage);
             if(saveFile != null){
                 String path = saveFile.getAbsolutePath();
-                FileWork parserDOM = new FileWork(path); // + "students.xml"
+                StudentsFile parserDOM = new StudentsFile(path); // + "students.xml"
                 parserDOM.saveDocument(studentsArray, path);
             }
         });
@@ -317,7 +317,7 @@ public class MySearchJavaFX extends Application {
             File loadFile = fileChoose.showOpenDialog(primaryStage);         
             if(loadFile != null){
                 String path = loadFile.getAbsolutePath();
-                FileWork parserSAX = new FileWork(path);
+                StudentsFile parserSAX = new StudentsFile(path);
                 ArrayList<Student> newStudents = parserSAX.loadDocument(path);
                 
                 studentsArray.clear();

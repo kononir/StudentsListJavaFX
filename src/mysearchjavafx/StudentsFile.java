@@ -23,7 +23,7 @@ import model.*;
  *
  * @author Vlad
  */
-public class FileWork {
+public class StudentsFile {
     private String PATH;
     private Document document;
     private ArrayList<Student> students;
@@ -250,10 +250,10 @@ public class FileWork {
         return students;
     }
     
-    public FileWork(String PATH){
+    public StudentsFile(String PATH){
         this.PATH = PATH;
     }
-    public FileWork(){
+    public StudentsFile(){
         this.PATH = "";
     }
 }
