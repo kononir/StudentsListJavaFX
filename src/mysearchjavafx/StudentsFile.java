@@ -15,6 +15,7 @@ import javax.xml.parsers.*;
 import javax.xml.transform.*;
 import javax.xml.transform.dom.*;
 import java.io.*;
+import java.util.List;
 import javax.xml.transform.stream.*;
 
 import model.*;
@@ -26,7 +27,7 @@ import model.*;
 public class StudentsFile {
     private String PATH;
     private Document document;
-    private ArrayList<Student> students;
+    private List<Student> students;
     
     private void newFIO(Person person, Element personElement){
         Element firstNameElement = document.createElement("firstName");
@@ -70,7 +71,7 @@ public class StudentsFile {
         }
     }
     
-    public void saveDocument(ArrayList<Student> studentsArray, String PATH) 
+    public void saveDocument(List<Student> studentsArray, String PATH) 
     { 
         this.PATH = PATH;
         try{
@@ -257,7 +258,7 @@ public class StudentsFile {
         }
     };
     
-    public ArrayList<Student> loadDocument(String PATH){
+    public List<Student> loadDocument(String PATH){
         try{
             SAXParserFactory saxParserFact = SAXParserFactory.newInstance();
             SAXParser saxParser = saxParserFact.newSAXParser();

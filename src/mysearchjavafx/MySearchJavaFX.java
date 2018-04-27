@@ -8,7 +8,8 @@ package mysearchjavafx;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.io.*;
-
+import java.net.URL;
+import java.util.List;
 import javafx.application.*;
 //import javafx.geometry.Pos;
 import javafx.scene.*;
@@ -21,6 +22,7 @@ import javafx.scene.image.*;
 import javafx.scene.input.*;
 import javafx.collections.*;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXMLLoader;
 //import javafx.event.EventHandler;
 import javafx.scene.control.cell.*;
 import javafx.geometry.*;
@@ -35,7 +37,7 @@ public class MySearchJavaFX extends Application {
     
     @Override
     public void start(Stage primaryStage) {
-        ArrayList<Student> studentsArray = new ArrayList();
+        List<Student> studentsList = new ArrayList();
         
         TableView<StudentTableClass> currentTable = new TableView();
         TableColumn<StudentTableClass, String> studentsName = new TableColumn("Students full name");
@@ -92,73 +94,73 @@ public class MySearchJavaFX extends Application {
             
             Stage curentDialogStage = new Stage();
             
-            ArrayList<HBox> HBoxesOfCurrentDialog = new ArrayList();
+            List<HBox> hBoxesOfCurrentDialog = new ArrayList();
             
             Label studentFirstNameLabel = new Label("Student first name");
             TextField studentFirstNameTextField = new TextField();        
-            HBoxesOfCurrentDialog.add(makeNewHBox(studentFirstNameLabel, studentFirstNameTextField, 63));
+            hBoxesOfCurrentDialog.add(makeNewHBox(studentFirstNameLabel, studentFirstNameTextField, 63));
             
             Label studentSurNameLabel = new Label("Student sur name");
             TextField studentSurNameTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(studentSurNameLabel, studentSurNameTextField, 67));
+            hBoxesOfCurrentDialog.add(makeNewHBox(studentSurNameLabel, studentSurNameTextField, 67));
             
             Label studentLastNameLabel = new Label("Student last name");
             TextField studentLastNameTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(studentLastNameLabel, studentLastNameTextField, 65));
+            hBoxesOfCurrentDialog.add(makeNewHBox(studentLastNameLabel, studentLastNameTextField, 65));
             
             Label fatherFirstNameLabel = new Label("Father first name");
             TextField fatherFirstNameTextField = new TextField();        
-            HBoxesOfCurrentDialog.add(makeNewHBox(fatherFirstNameLabel, fatherFirstNameTextField, 71));
+            hBoxesOfCurrentDialog.add(makeNewHBox(fatherFirstNameLabel, fatherFirstNameTextField, 71));
             
             Label fatherSurNameLabel = new Label("Father sur name");
             TextField fatherSurNameTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(fatherSurNameLabel, fatherSurNameTextField, 75));
+            hBoxesOfCurrentDialog.add(makeNewHBox(fatherSurNameLabel, fatherSurNameTextField, 75));
             
             Label fatherLastNameLabel = new Label("Father last Name");
             TextField fatherLastNameTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(fatherLastNameLabel, fatherLastNameTextField, 71));
+            hBoxesOfCurrentDialog.add(makeNewHBox(fatherLastNameLabel, fatherLastNameTextField, 71));
             
             Label fatherSalaryRublesLabel = new Label("Father salary, rubles");
             TextField fatherSalaryRublesTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(fatherSalaryRublesLabel, fatherSalaryRublesTextField, 57));
+            hBoxesOfCurrentDialog.add(makeNewHBox(fatherSalaryRublesLabel, fatherSalaryRublesTextField, 57));
             
             Label fatherSalaryPennyLabel = new Label("Father salary, penny");
             TextField fatherSalaryPennyTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(fatherSalaryPennyLabel, fatherSalaryPennyTextField, 57));
+            hBoxesOfCurrentDialog.add(makeNewHBox(fatherSalaryPennyLabel, fatherSalaryPennyTextField, 57));
             
             Label motherFirstNameLabel = new Label("Mother first name");
             TextField motherFirstNameTextField = new TextField();        
-            HBoxesOfCurrentDialog.add(makeNewHBox(motherFirstNameLabel, motherFirstNameTextField, 67));
+            hBoxesOfCurrentDialog.add(makeNewHBox(motherFirstNameLabel, motherFirstNameTextField, 67));
             
             Label motherSurNameLabel = new Label("Mother sur name");
             TextField motherSurNameTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(motherSurNameLabel, motherSurNameTextField, 71));
+            hBoxesOfCurrentDialog.add(makeNewHBox(motherSurNameLabel, motherSurNameTextField, 71));
             
             Label motherLastNameLabel = new Label("Mother last Name");
             TextField motherLastNameTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(motherLastNameLabel, motherLastNameTextField, 67));
+            hBoxesOfCurrentDialog.add(makeNewHBox(motherLastNameLabel, motherLastNameTextField, 67));
             
             Label motherSalaryRublesLabel = new Label("Mother salary, rubles");
             TextField motherSalaryRublesTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(motherSalaryRublesLabel, motherSalaryRublesTextField, 53));
+            hBoxesOfCurrentDialog.add(makeNewHBox(motherSalaryRublesLabel, motherSalaryRublesTextField, 53));
             
             Label motherSalaryPennyLabel = new Label("Mother salary, penny");
             TextField motherSalaryPennyTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(motherSalaryPennyLabel, motherSalaryPennyTextField, 51));
+            hBoxesOfCurrentDialog.add(makeNewHBox(motherSalaryPennyLabel, motherSalaryPennyTextField, 51));
             
             Label numberOfBrothersLabel = new Label("Number of student brothers");
             TextField numberOfBrothersTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(numberOfBrothersLabel, numberOfBrothersTextField, 13));
+            hBoxesOfCurrentDialog.add(makeNewHBox(numberOfBrothersLabel, numberOfBrothersTextField, 13));
             
             Label numberOfSistersLabel = new Label("Number of student sisters");
             TextField numberOfSistersTextField = new TextField();
-            HBoxesOfCurrentDialog.add(makeNewHBox(numberOfSistersLabel, numberOfSistersTextField, 25));
+            hBoxesOfCurrentDialog.add(makeNewHBox(numberOfSistersLabel, numberOfSistersTextField, 25));
             
             VBox curentDialogVBox = new VBox();
             curentDialogVBox.setSpacing(10);
             curentDialogVBox.setPadding(new Insets(15,20,10,10));
-            for(int iter = 0; iter < HBoxesOfCurrentDialog.size(); iter++)
-                curentDialogVBox.getChildren().add(HBoxesOfCurrentDialog.get(iter));
+            for(int iter = 0; iter < hBoxesOfCurrentDialog.size(); iter++)
+                curentDialogVBox.getChildren().add(hBoxesOfCurrentDialog.get(iter));
             
             Button curentDialogOk = new Button("OK");
             curentDialogOk.setOnAction(action -> {
@@ -190,7 +192,7 @@ public class MySearchJavaFX extends Application {
                         numOfBrothers,
                         numOfSisters
                 );
-                studentsArray.add(informationAboutNewStudent);
+                studentsList.add(informationAboutNewStudent);
                 
                 tableList.add(new StudentTableClass(
                         studentLastName + " " + studentFirstName + " " 
@@ -256,44 +258,121 @@ public class MySearchJavaFX extends Application {
             
             Optional<String> answerOptional = searchChoiceDialog.showAndWait();
             answerOptional.ifPresent(answer -> {
+                List<HBox> hBoxesOfCurrentDialog = new ArrayList();  
+                String searchArg = new String();
                 switch(answer){
-                    case "Students FIO":
-                        Stage curentDialogStage = new Stage();
-            
-                        ArrayList<HBox> HBoxesOfCurrentDialog = new ArrayList();
-            
-                        Label studentFirstNameLabel = new Label("First name");
-                        TextField studentFirstNameTextField = new TextField();        
-                        HBoxesOfCurrentDialog.add(makeNewHBox(studentFirstNameLabel, studentFirstNameTextField, 63));
-                        
-                        Label studentSurNameLabel = new Label("Surname");
-                        TextField studentSurNameTextField = new TextField();        
-                        HBoxesOfCurrentDialog.add(makeNewHBox(studentSurNameLabel, studentSurNameTextField, 63));
-                        
-                        Label studentLastNameLabel = new Label("Last name");
-                        TextField studentLastNameTextField = new TextField();        
-                        HBoxesOfCurrentDialog.add(makeNewHBox(studentLastNameLabel, studentLastNameTextField, 63));
-                        
-                        
-                        break;
+                    case "Students FIO":                                                                                     
                     case "Father FIO":
-                        break;
                     case "Mother FIO":
+                        Label firstNameLabel = new Label("First name");
+                        TextField firstNameTextField = new TextField();        
+                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                firstNameLabel,
+                                firstNameTextField,
+                                63
+                        ));
+
+                        Label surNameLabel = new Label("Surname");
+                        TextField surNameTextField = new TextField();        
+                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                surNameLabel,
+                                surNameTextField,
+                                63
+                        ));
+
+                        Label lastNameLabel = new Label("Last name");
+                        TextField lastNameTextField = new TextField();        
+                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                lastNameLabel,
+                                lastNameTextField,
+                                63
+                        ));
+                        
+                        String firstName = firstNameTextField.getText();
+                        String surName = surNameTextField.getText();
+                        String lastName = lastNameTextField.getText();
+                        
+                        searchArg = firstName + " " + surName 
+                                  + " " + lastName;
+                        
                         break;
                     case "Number of brothers":
-                        break;
                     case "Number of sisters":
-                        break;
+                        Label numberLabel = new Label("Number");
+                        TextField numberTextField = new TextField();
+                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                numberLabel,
+                                numberTextField,
+                                25
+                        ));
                     case "Father salary":
-                        break;
                     case "Mother salary":
+                        Label salaryRublesLabel = new Label("Salary, rubles");
+                        TextField salaryRublesTextField = new TextField();
+                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                salaryRublesLabel,
+                                salaryRublesTextField,
+                                53
+                        ));
+
+                        Label salaryPennyLabel = new Label("Salary, penny");
+                        TextField salaryPennyTextField = new TextField();
+                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                salaryPennyLabel,
+                                salaryPennyTextField,
+                                51
+                        ));
                         break;
                 }
+                
+                VBox curentDialogVBox = new VBox();
+                curentDialogVBox.setSpacing(10);
+                curentDialogVBox.setPadding(new Insets(15,20,10,10));
+                for(int iter = 0; iter < hBoxesOfCurrentDialog.size(); iter++){
+                    HBox iterHBox = hBoxesOfCurrentDialog.get(iter);                                  
+                    curentDialogVBox.getChildren().add(iterHBox);
+                }
+                
+                Stage curentDialogStage = new Stage();
+                              
+                Button curentDialogOk = new Button();
+                try {
+                    FXMLLoader searchOkButtonLoader = new FXMLLoader();
+                    URL fxmlUrl = getClass().getResource("SearchDialog.fxml");
+                    curentDialogOk = FXMLLoader.load(fxmlUrl);
+                    curentDialogOk.setText("OK");
+                    
+                    SearchDialogController currentController = new SearchDialogController();
+                    currentController.setCurrentStudentsList(studentsList);
+                    currentController.setClassOfSearchArg(answer);
+                    currentController.setSearchArg(searchArg);
+                } catch (IOException exception) {
+                    exception.printStackTrace(System.out);
+                }              
+                
+                Button curentDialogCancel = new Button("Cancel");
+                curentDialogCancel.setOnAction(action1 -> {
+                    curentDialogStage.close();
+                });
+
+                HBox curentDialogHBoxWithButtons = makeNewHBox(curentDialogOk, curentDialogCancel, 1);
+
+                AnchorPane curentDialogAnchorPane = new AnchorPane();
+                AnchorPane.setTopAnchor(curentDialogVBox, 5.0);
+                AnchorPane.setLeftAnchor(curentDialogVBox, 5.0);
+                AnchorPane.setBottomAnchor(curentDialogHBoxWithButtons, 10.0);
+                AnchorPane.setRightAnchor(curentDialogHBoxWithButtons, 10.0);
+                curentDialogAnchorPane.getChildren().addAll(curentDialogVBox, curentDialogHBoxWithButtons);
+
+                Scene curentDialogScene = new Scene(curentDialogAnchorPane, 200, 350);
+                
+                curentDialogStage.initStyle(StageStyle.UTILITY);
+                curentDialogStage.setTitle(answer);
+                curentDialogStage.setScene(curentDialogScene);
+                curentDialogStage.show();
             });
             
-            /*Stage curentDialogStage = new Stage();
             
-            ArrayList<HBox> HBoxesOfCurrentDialog = new ArrayList();*/
         });
         
         Button toolSaveButton = new Button();
@@ -305,7 +384,7 @@ public class MySearchJavaFX extends Application {
             if(saveFile != null){
                 String path = saveFile.getAbsolutePath();
                 StudentsFile parserDOM = new StudentsFile(path); // + "students.xml"
-                parserDOM.saveDocument(studentsArray, path);
+                parserDOM.saveDocument(studentsList, path);
             }
         });
         
@@ -318,11 +397,11 @@ public class MySearchJavaFX extends Application {
             if(loadFile != null){
                 String path = loadFile.getAbsolutePath();
                 StudentsFile parserSAX = new StudentsFile(path);
-                ArrayList<Student> newStudents = parserSAX.loadDocument(path);
+                List<Student> newStudents = parserSAX.loadDocument(path);
                 
-                studentsArray.clear();
+                studentsList.clear();
                 for(int iter = 0; iter < newStudents.size(); iter++){  
-                    studentsArray.add(newStudents.get(iter));
+                    studentsList.add(newStudents.get(iter));
                 }
                 
                 ObservableList<StudentTableClass> newTableList = 
@@ -348,23 +427,26 @@ public class MySearchJavaFX extends Application {
         Menu fileMenu = new Menu("File");
         Menu editMenu = new Menu("Edit");
         
-        MenuItem menuAddButton = new MenuItem("Add");
-        MenuItem menuRemoveButton = new MenuItem("Remove");
-        MenuItem menuSearchButton = new MenuItem("Search");
+        MenuItem menuAddButton = new MenuItem("Add");       
         MenuItem menuSaveButton = new MenuItem("Save");
         MenuItem menuLoadButton = new MenuItem("Load");
+        MenuItem menuDeleteButton = new MenuItem("Remove");
+        MenuItem menuSearchButton = new MenuItem("Search");
         
         menuAddButton.setOnAction(toolAddButton.getOnAction());
         menuSaveButton.setOnAction(toolSaveButton.getOnAction());
         menuLoadButton.setOnAction(toolLoadButton.getOnAction());
+        menuSearchButton.setOnAction(toolSearchButton.getOnAction());
+        menuDeleteButton.setOnAction(toolDeleteButton.getOnAction());
         
         menuAddButton.setAccelerator(KeyCombination.keyCombination("Ctrl+A"));
-        menuRemoveButton.setAccelerator(KeyCombination.keyCombination("Ctrl+R"));
         menuSaveButton.setAccelerator(KeyCombination.keyCombination("Ctrl+S"));
         menuLoadButton.setAccelerator(KeyCombination.keyCombination("Ctrl+L"));
+        menuDeleteButton.setAccelerator(KeyCombination.keyCombination("Ctrl+D"));
+        menuSearchButton.setAccelerator(KeyCombination.keyCombination("Ctrl+F"));
         
         fileMenu.getItems().addAll(menuSaveButton, menuLoadButton);
-        editMenu.getItems().addAll(menuAddButton, menuRemoveButton, menuSearchButton);
+        editMenu.getItems().addAll(menuAddButton, menuDeleteButton, menuSearchButton);
         menuBar.getMenus().addAll(editMenu, fileMenu);
         
         AnchorPane anchorPane = new AnchorPane();
@@ -416,9 +498,9 @@ public class MySearchJavaFX extends Application {
         return fileChoose;
     }
     
-    private ObservableList<StudentTableClass> makeNewTableList(ArrayList<Student> studentsArray){
+    public ObservableList<StudentTableClass> makeNewTableList(List<Student> studentsList){
         ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList();
-        studentsArray.forEach ((student) -> {
+        studentsList.forEach ((student) -> {
             StringBuilder studentFIO = new StringBuilder();
             studentFIO.append(student.getLastName()).append(" ")
                       .append(student.getFirstName()).append(" ")
