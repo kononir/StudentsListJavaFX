@@ -30,9 +30,9 @@ public class MySearchJavaFX extends Application {
     public void start(Stage primaryStage) {
         List<Student> studentsList = new ArrayList();
         
-        AnchorPane anchorPane = new AnchorPane();
+        AnchorPane mainPane = new AnchorPane();
         
-        int rowsPerPage = 10; //перенести в TableWithPagination; заменить на считывание из TextField
+        int rowsPerPage = 10;
                             
         PaginationTableBuilder paginationTableBuilder
                 = new PaginationTableBuilder(rowsPerPage);
@@ -149,10 +149,11 @@ public class MySearchJavaFX extends Application {
                 AnchorPane.setTopAnchor(addTable, 67.0);
                 AnchorPane.setLeftAnchor(addTable, 0.0);
                 AnchorPane.setRightAnchor(addTable, 0.0);
+                AnchorPane.setBottomAnchor(addTable, 0.0);
                 
                 int tableIndex = 2;
-                anchorPane.getChildren().remove(tableIndex);
-                anchorPane.getChildren().add(addTable);
+                mainPane.getChildren().remove(tableIndex);
+                mainPane.getChildren().add(addTable);
                 
                 System.out.println("All right");
                 curentDialogStage.close();
@@ -261,19 +262,19 @@ public class MySearchJavaFX extends Application {
                             List<Student> listOfFidingStudents 
                                     = currentController.findInformation();
                                                         
-                            int dialogRowsPerPage = 10; //заменить на считывание из TextField
+                            int dialogRowsPerPage = 10;
                             
                             PaginationTableBuilder paginationBuilder
                                     = new PaginationTableBuilder(dialogRowsPerPage);
                                                    
-                            AnchorPane table = paginationBuilder
+                            AnchorPane dialogTable = paginationBuilder
                                     .createPaginationTable(listOfFidingStudents);
                                                                                    
-                            curentDialogAnchorPane.getChildren().add(table);
-                            AnchorPane.setTopAnchor(table, 120.0);
-                            AnchorPane.setLeftAnchor(table, 0.0);
-                            AnchorPane.setBottomAnchor(table, 50.0);
-                            AnchorPane.setRightAnchor(table, 20.0);
+                            curentDialogAnchorPane.getChildren().add(dialogTable);
+                            AnchorPane.setTopAnchor(dialogTable, 120.0);
+                            AnchorPane.setLeftAnchor(dialogTable, 0.0);
+                            AnchorPane.setBottomAnchor(dialogTable, 50.0);
+                            AnchorPane.setRightAnchor(dialogTable, 20.0);
                             
                             
                         });
@@ -381,12 +382,13 @@ public class MySearchJavaFX extends Application {
                 AnchorPane loadTable = paginationTableBuilder.createPaginationTable(studentsList);
                 
                 int tableIndex = 2;
-                anchorPane.getChildren().remove(tableIndex);
-                anchorPane.getChildren().add(loadTable);
+                mainPane.getChildren().remove(tableIndex);
+                mainPane.getChildren().add(loadTable);
                 
                 AnchorPane.setTopAnchor(loadTable, 67.0);
                 AnchorPane.setLeftAnchor(loadTable, 0.0);
                 AnchorPane.setRightAnchor(loadTable, 0.0);
+                AnchorPane.setBottomAnchor(loadTable, 0.0);
             }
         });
         
@@ -435,11 +437,12 @@ public class MySearchJavaFX extends Application {
         AnchorPane.setTopAnchor(mainTable, 67.0);
         AnchorPane.setLeftAnchor(mainTable, 0.0);
         AnchorPane.setRightAnchor(mainTable, 0.0);
-        anchorPane.getChildren().addAll(menuBar, toolBar, mainTable);
+        AnchorPane.setBottomAnchor(mainTable, 0.0);
+        mainPane.getChildren().addAll(menuBar, toolBar, mainTable);
         
         ScrollPane scroll = new ScrollPane();
         scroll.setFitToHeight(true);
-        scroll.setContent(anchorPane);
+        scroll.setContent(mainPane);
         scroll.setPannable(true);
         
         Scene scene = new Scene(scroll, 600, 500);

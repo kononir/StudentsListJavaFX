@@ -8,10 +8,15 @@ package mysearchjavafx;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.text.Font;
 import model.MoneyBr;
 import model.Student;
 
@@ -22,6 +27,8 @@ import model.Student;
 public class PaginationTableBuilder {
     private int rowsPerPage;
     private int numberOfPages;
+    private int pageIndex;
+    private int numberOfStudents;
     
     public PaginationTableBuilder(int rowsPerPage){
         this.rowsPerPage = rowsPerPage;
@@ -43,34 +50,155 @@ public class PaginationTableBuilder {
         return this.numberOfPages;
     }
     
-    public final AnchorPane createPaginationTable(List<Student> listOfStudents){
-        int pageIndex = 0;
-        int sizeOfList = listOfStudents.size();
-        numberOfPages = (sizeOfList / rowsPerPage + 1);
-        return createTablePage(pageIndex, listOfStudents);
-    }
-    
-    public final AnchorPane createTablePage(
-            int pageIndex,
-            List<Student> listOfStudents
-    ){
+    public final AnchorPane createPaginationTable(List<Student> listOfStudents){       
+        numberOfStudents = listOfStudents.size();
+        if(numberOfStudents % rowsPerPage == 0){
+            numberOfPages = (numberOfStudents / rowsPerPage);
+        }
+        else{
+            numberOfPages = (numberOfStudents / rowsPerPage + 1);
+        }
+        
+        pageIndex = 0;
         
         TableView tablePart = createTable();
-        
-        int fromIndex = pageIndex * rowsPerPage;
-        int listSize = listOfStudents.size();
-        int toIndex = Math.min(fromIndex + rowsPerPage, listSize);
-        
-        List<Student> subList = listOfStudents
-                .subList(fromIndex, toIndex);
-        
-        ObservableList<StudentTableClass> tableSubList 
-                = makeNewTableList(subList);       
+        ObservableList<StudentTableClass> tableSubList
+                = makeNewTableList(listOfStudents);   
         tablePart.setItems(tableSubList);
-                
-        AnchorPane page = new AnchorPane(tablePart);
-        AnchorPane.setBottomAnchor(tablePart, 10.0);
+
+        int currentPageNumber = pageIndex + 1;
+        Label pagesLabel = new Label("Page: " + currentPageNumber + "/" + numberOfPages);
+        pagesLabel.setFont(new Font("Arial", 15));
         
+        Button firstPageButton = new Button("First page");
+        firstPageButton.setOnAction(firstPageAction -> {
+            if(pageIndex == 0)
+                return;
+            
+            pageIndex = 0;
+            int currentPageNumberAction = pageIndex + 1;
+            pagesLabel.setText("Page: " + currentPageNumberAction + "/" + numberOfPages);
+            
+            tableSubList.clear();           
+            ObservableList<StudentTableClass> newTableSubList
+                    = makeNewTableList(listOfStudents);
+            newTableSubList.forEach((student) -> {
+                tableSubList.add(student);
+            });
+        });
+        
+        Button lastPageButton = new Button("Last page");
+        lastPageButton.setOnAction(lastPageAction -> {
+            if(pageIndex == numberOfPages - 1)
+                return;
+            
+            pageIndex = numberOfPages - 1;
+            int currentPageNumberAction = pageIndex + 1;
+            pagesLabel.setText("Page: " + currentPageNumberAction + "/" + numberOfPages);
+            
+            tableSubList.clear();           
+            ObservableList<StudentTableClass> newTableSubList
+                    = makeNewTableList(listOfStudents);
+            newTableSubList.forEach((student) -> {
+                tableSubList.add(student);
+            });
+        });
+        
+        Button nextPageButton = new Button("Next page");
+        nextPageButton.setOnAction(nextPageAction -> {
+            if(pageIndex == numberOfPages - 1)
+                return;
+            
+            pageIndex++;
+            int currentPageNumberAction = pageIndex + 1;
+            pagesLabel.setText("Page: " + currentPageNumberAction + "/" + numberOfPages);
+            
+            tableSubList.clear();           
+            ObservableList<StudentTableClass> newTableSubList
+                    = makeNewTableList(listOfStudents);
+            newTableSubList.forEach((student) -> {
+                tableSubList.add(student);
+            });
+        }); 
+        
+        Button prevPageButton = new Button("Prev page");
+        prevPageButton.setOnAction(prevPageAction -> {
+            if(pageIndex == 0)
+                return;
+            
+            pageIndex--;
+            int currentPageNumberAction = pageIndex + 1;
+            pagesLabel.setText("Page: " + currentPageNumberAction + "/" + numberOfPages);
+            
+            tableSubList.clear();           
+            ObservableList<StudentTableClass> newTableSubList
+                    = makeNewTableList(listOfStudents);
+            newTableSubList.forEach((student) -> {
+                tableSubList.add(student);
+            });
+        });
+        
+        Label recordsLabel = new Label();
+        recordsLabel.setText("Number of records: " + rowsPerPage
+                                + "/" + numberOfStudents);
+        recordsLabel.setFont(new Font("Arial", 15));
+        
+        TextField rowsPerPageTextField = new TextField();
+        
+        Button rowsPerPageButton = new Button("Change");
+        rowsPerPageButton.setOnAction(actionRowsPerPage -> {
+            String rowsPerPageString = rowsPerPageTextField.getText();
+            
+            rowsPerPage = Integer.parseInt(rowsPerPageString);
+            pageIndex = 0;
+            
+            if(numberOfStudents % rowsPerPage == 0){
+                numberOfPages = (numberOfStudents / rowsPerPage);
+            }
+            else{
+                numberOfPages = (numberOfStudents / rowsPerPage + 1);
+            }
+            
+            int currentPageNumberAction = pageIndex + 1;
+            
+            pagesLabel.setText("Page: " + currentPageNumberAction + "/" + numberOfPages);
+            
+            recordsLabel.setText("Number of records: " + rowsPerPageString
+                                    + "/" + numberOfStudents);
+                    
+            tableSubList.clear();           
+            ObservableList<StudentTableClass> newTableSubList
+                    = makeNewTableList(listOfStudents);
+            newTableSubList.forEach((student) -> {
+                tableSubList.add(student);
+            });
+        });    
+        
+        HBox pageHBox = new HBox
+        (
+                pagesLabel,
+                firstPageButton,
+                nextPageButton,                
+                prevPageButton,
+                lastPageButton
+        );
+        
+        HBox recordsHBox = new HBox
+        (
+                recordsLabel,
+                rowsPerPageTextField,
+                rowsPerPageButton
+        );
+        
+        pageHBox.setSpacing(5.0);  
+        recordsHBox.setSpacing(5.0);       
+                
+        AnchorPane page = new AnchorPane(tablePart,recordsHBox, pageHBox);
+        AnchorPane.setTopAnchor(tablePart, 0.0);
+        AnchorPane.setBottomAnchor(tablePart, 70.0);
+        AnchorPane.setBottomAnchor(recordsHBox, 35.0);
+        AnchorPane.setBottomAnchor(pageHBox, 5.0);
+              
         return page;
     }
     
@@ -123,8 +251,14 @@ public class PaginationTableBuilder {
     }
     
     private ObservableList<StudentTableClass> makeNewTableList(List<Student> studentsList){
+        int fromIndex = pageIndex * rowsPerPage;
+        int listSize = studentsList.size();
+        int toIndex = Math.min(fromIndex + rowsPerPage, listSize);
+        
+        List<Student> subList = studentsList.subList(fromIndex, toIndex);       
         ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList();
-        studentsList.forEach ((student) -> {
+        
+        subList.forEach ((student) -> {
             StringBuilder studentFIO = new StringBuilder();
             studentFIO.append(student.getLastName()).append(" ")
                       .append(student.getFirstName()).append(" ")
