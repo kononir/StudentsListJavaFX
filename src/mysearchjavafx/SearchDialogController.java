@@ -7,10 +7,7 @@ package mysearchjavafx;
 
 import java.util.ArrayList;
 import java.util.List;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.fxml.FXML;
-import javafx.scene.control.TableView;
+//import javafx.scene.layout.AnchorPane;
 import model.Student;
 
 /**
@@ -23,7 +20,7 @@ public class SearchDialogController {
     private List<Student> currentStudentsList;
     private String searchArg;
     private String classOfSearchArg;
-    private TableView dialogTableView;
+    //private AnchorPane dialogAnchorPane;
     
     public void SearchDialogController(){
     }
@@ -31,24 +28,25 @@ public class SearchDialogController {
     public void initialize() {   
     }  
     
-    @FXML
-    private void findInformation(){
+    public List<Student> findInformation(){       
+        if(currentStudentsList.isEmpty()){
+            System.out.println("NoElements");
+            return null;
+        }
+            
         List<Student> listOfFidingStudents = new ArrayList();
         for(int iter = 0; iter < currentStudentsList.size(); iter++){
             Student student = currentStudentsList.get(iter);
             String studentFirstName = student.getFirstName();
             String studentSurname = student.getSurName();
             String studentLastName = student.getLastName();
-            String studentFullName = studentFirstName + "" + studentSurname
-                                   + "" + studentLastName;
+            String studentFullName = studentFirstName + " " + studentSurname
+                                   + " " + studentLastName;
             if(studentFullName.equals(searchArg)){
                 listOfFidingStudents.add(student);
             }
         }
-        ObservableList<StudentTableClass> tableListOfFidingStudents = FXCollections.observableArrayList();
-                tableListOfFidingStudents = new MySearchJavaFX()
-                        .makeNewTableList(listOfFidingStudents);
-        dialogTableView = new TableView(tableListOfFidingStudents);
+        return listOfFidingStudents;
     }
     
     public void setCurrentStudentsList(List<Student> currentStudentsList) {
@@ -62,5 +60,9 @@ public class SearchDialogController {
     public void setSearchArg(String searchArg) {
         this.searchArg = searchArg;
     } 
+    
+    /*public void setDialogAnchorPane(AnchorPane dialogAnchorPane) {
+        this.dialogAnchorPane = dialogAnchorPane;
+    } */
  
 }

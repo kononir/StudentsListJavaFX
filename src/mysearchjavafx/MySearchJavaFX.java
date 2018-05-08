@@ -8,25 +8,16 @@ package mysearchjavafx;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.io.*;
-import java.net.URL;
 import java.util.List;
 import javafx.application.*;
-//import javafx.geometry.Pos;
 import javafx.scene.*;
 import javafx.scene.control.*;
-//import javafx.stage.StageStyle.*;
 import javafx.scene.layout.*;
 import javafx.stage.*;
-//import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.scene.image.*;
 import javafx.scene.input.*;
-import javafx.collections.*;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
-//import javafx.event.EventHandler;
-import javafx.scene.control.cell.*;
 import javafx.geometry.*;
-
 import model.*;
 
 /**
@@ -39,53 +30,14 @@ public class MySearchJavaFX extends Application {
     public void start(Stage primaryStage) {
         List<Student> studentsList = new ArrayList();
         
-        TableView<StudentTableClass> currentTable = new TableView();
-        TableColumn<StudentTableClass, String> studentsName = new TableColumn("Students full name");
-        TableColumn<StudentTableClass, String> fatherName = new TableColumn("Father full name");
-        TableColumn<StudentTableClass, String> fatherSalary = new TableColumn("Father salary");
-        TableColumn<StudentTableClass, String> motherName = new TableColumn("Mother full name");
-        TableColumn<StudentTableClass, String> motherSalary = new TableColumn("Mother salary");
-        TableColumn<StudentTableClass, String> numberOfBrothers = new TableColumn("Number of brothers");
-        TableColumn<StudentTableClass, String> numberOfSisters = new TableColumn("Number of sisters");
+        AnchorPane anchorPane = new AnchorPane();
         
-        currentTable.getColumns().addAll(
-                studentsName,
-                fatherName,
-                fatherSalary,
-                motherName,
-                motherSalary,
-                numberOfBrothers,
-                numberOfSisters
-        );
-        
-        ObservableList<TableColumn<StudentTableClass,?>> tableColumns = currentTable.getColumns();
-        for(int iter = 0; iter < tableColumns.size(); iter++)
-            tableColumns.get(iter).setMinWidth(195);
-        
-        studentsName.setCellValueFactory(
-                new PropertyValueFactory<>("studentsFIO")
-        );
-        fatherName.setCellValueFactory(
-                new PropertyValueFactory<>("fatherFIO")
-        );
-        fatherSalary.setCellValueFactory(
-                new PropertyValueFactory<>("fatherSalary")
-        );
-        motherName.setCellValueFactory(
-                new PropertyValueFactory<>("motherFIO")
-        );
-        motherSalary.setCellValueFactory(
-                new PropertyValueFactory<>("motherSalary")
-        );
-        numberOfBrothers.setCellValueFactory(
-                new PropertyValueFactory<>("numberOfBrothers")
-        );
-        numberOfSisters.setCellValueFactory(
-                new PropertyValueFactory<>("numberOfSisters")
-        );
-        
-        ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList();
-        currentTable.setItems(tableList);
+        int rowsPerPage = 10; //перенести в TableWithPagination; заменить на считывание из TextField
+                            
+        PaginationTableBuilder paginationTableBuilder
+                = new PaginationTableBuilder(rowsPerPage);
+
+        AnchorPane mainTable = paginationTableBuilder.createPaginationTable(studentsList);
         
         Button toolAddButton = new Button();
         Image imagePlus = new Image(getClass().getResourceAsStream("add.png"));
@@ -193,21 +145,14 @@ public class MySearchJavaFX extends Application {
                         numOfSisters
                 );
                 studentsList.add(informationAboutNewStudent);
+                AnchorPane addTable = paginationTableBuilder.createPaginationTable(studentsList);
+                AnchorPane.setTopAnchor(addTable, 67.0);
+                AnchorPane.setLeftAnchor(addTable, 0.0);
+                AnchorPane.setRightAnchor(addTable, 0.0);
                 
-                tableList.add(new StudentTableClass(
-                        studentLastName + " " + studentFirstName + " " 
-                        + studentSurName,
-                        fatherLastName + " " + fatherSurName + " "
-                        + fatherFirstName,
-                        String.valueOf(fatherSalaryRubles) + "." 
-                        + String.valueOf(fatherSalaryPenny),
-                        motherLastName + " " + motherFirstName + " "
-                        + motherSurName,
-                        String.valueOf(motherSalaryRubles) + "."
-                        + String.valueOf(motherSalaryPenny),
-                        String.valueOf(numOfBrothers),
-                        String.valueOf(numOfSisters)
-                ));
+                int tableIndex = 2;
+                anchorPane.getChildren().remove(tableIndex);
+                anchorPane.getChildren().add(addTable);
                 
                 System.out.println("All right");
                 curentDialogStage.close();
@@ -257,9 +202,25 @@ public class MySearchJavaFX extends Application {
             searchChoiceDialog.setContentText("Please, choice searching argument:");
             
             Optional<String> answerOptional = searchChoiceDialog.showAndWait();
-            answerOptional.ifPresent(answer -> {
-                List<HBox> hBoxesOfCurrentDialog = new ArrayList();  
-                String searchArg = new String();
+            answerOptional.ifPresent(answer -> { 
+                Stage curentDialogStage = new Stage();
+                AnchorPane curentDialogAnchorPane = new AnchorPane();
+                
+                List<HBox> hBoxesOfCurrentDialog = new ArrayList();
+                
+                Button curentDialogOk = new Button("OK");
+                
+                Button curentDialogCancel = new Button("Cancel");
+                curentDialogCancel.setOnAction(action2 -> {
+                    curentDialogStage.close();
+                });
+                
+                SearchDialogController currentController 
+                        = new SearchDialogController();
+                
+                currentController.setCurrentStudentsList(studentsList);
+                currentController.setClassOfSearchArg(answer); 
+                                
                 switch(answer){
                     case "Students FIO":                                                                                     
                     case "Father FIO":
@@ -277,7 +238,7 @@ public class MySearchJavaFX extends Application {
                         hBoxesOfCurrentDialog.add(makeNewHBox(
                                 surNameLabel,
                                 surNameTextField,
-                                63
+                                70
                         ));
 
                         Label lastNameLabel = new Label("Last name");
@@ -287,13 +248,35 @@ public class MySearchJavaFX extends Application {
                                 lastNameTextField,
                                 63
                         ));
-                        
-                        String firstName = firstNameTextField.getText();
-                        String surName = surNameTextField.getText();
-                        String lastName = lastNameTextField.getText();
-                        
-                        searchArg = firstName + " " + surName 
-                                  + " " + lastName;
+                      
+                        curentDialogOk.setOnAction(action1 -> {
+                            String firstName = firstNameTextField.getText();
+                            String surName = surNameTextField.getText();
+                            String lastName = lastNameTextField.getText();
+                            
+                            String searchArg = firstName + " " + surName 
+                                             + " " + lastName;
+                            currentController.setSearchArg(searchArg);
+                            
+                            List<Student> listOfFidingStudents 
+                                    = currentController.findInformation();
+                                                        
+                            int dialogRowsPerPage = 10; //заменить на считывание из TextField
+                            
+                            PaginationTableBuilder paginationBuilder
+                                    = new PaginationTableBuilder(dialogRowsPerPage);
+                                                   
+                            AnchorPane table = paginationBuilder
+                                    .createPaginationTable(listOfFidingStudents);
+                                                                                   
+                            curentDialogAnchorPane.getChildren().add(table);
+                            AnchorPane.setTopAnchor(table, 120.0);
+                            AnchorPane.setLeftAnchor(table, 0.0);
+                            AnchorPane.setBottomAnchor(table, 50.0);
+                            AnchorPane.setRightAnchor(table, 20.0);
+                            
+                            
+                        });
                         
                         break;
                     case "Number of brothers":
@@ -305,6 +288,8 @@ public class MySearchJavaFX extends Application {
                                 numberTextField,
                                 25
                         ));
+                        
+                        break;
                     case "Father salary":
                     case "Mother salary":
                         Label salaryRublesLabel = new Label("Salary, rubles");
@@ -322,6 +307,7 @@ public class MySearchJavaFX extends Application {
                                 salaryPennyTextField,
                                 51
                         ));
+                        
                         break;
                 }
                 
@@ -332,43 +318,31 @@ public class MySearchJavaFX extends Application {
                     HBox iterHBox = hBoxesOfCurrentDialog.get(iter);                                  
                     curentDialogVBox.getChildren().add(iterHBox);
                 }
-                
-                Stage curentDialogStage = new Stage();
-                              
-                Button curentDialogOk = new Button();
-                try {
-                    FXMLLoader searchOkButtonLoader = new FXMLLoader();
-                    URL fxmlUrl = getClass().getResource("SearchDialog.fxml");
-                    curentDialogOk = FXMLLoader.load(fxmlUrl);
-                    curentDialogOk.setText("OK");
-                    
-                    SearchDialogController currentController = new SearchDialogController();
-                    currentController.setCurrentStudentsList(studentsList);
-                    currentController.setClassOfSearchArg(answer);
-                    currentController.setSearchArg(searchArg);
-                } catch (IOException exception) {
-                    exception.printStackTrace(System.out);
-                }              
-                
-                Button curentDialogCancel = new Button("Cancel");
-                curentDialogCancel.setOnAction(action1 -> {
-                    curentDialogStage.close();
-                });
 
-                HBox curentDialogHBoxWithButtons = makeNewHBox(curentDialogOk, curentDialogCancel, 1);
-
-                AnchorPane curentDialogAnchorPane = new AnchorPane();
+                HBox curentDialogHBoxWithButtons 
+                        = makeNewHBox(curentDialogOk, curentDialogCancel, 1);
+                                             
                 AnchorPane.setTopAnchor(curentDialogVBox, 5.0);
                 AnchorPane.setLeftAnchor(curentDialogVBox, 5.0);
                 AnchorPane.setBottomAnchor(curentDialogHBoxWithButtons, 10.0);
                 AnchorPane.setRightAnchor(curentDialogHBoxWithButtons, 10.0);
-                curentDialogAnchorPane.getChildren().addAll(curentDialogVBox, curentDialogHBoxWithButtons);
-
-                Scene curentDialogScene = new Scene(curentDialogAnchorPane, 200, 350);
+                curentDialogAnchorPane.getChildren().addAll(
+                        curentDialogVBox, 
+                        curentDialogHBoxWithButtons
+                ); 
                 
-                curentDialogStage.initStyle(StageStyle.UTILITY);
+                ScrollPane scroll = new ScrollPane();
+                scroll.setFitToHeight(true);
+                scroll.setFitToWidth(true);
+                scroll.setContent(curentDialogAnchorPane);
+                scroll.setPannable(true);  
+
+                Scene curentDialogScene = new Scene(scroll, 600, 500);              
+                
+                //curentDialogStage.initStyle(StageStyle.UTILITY);
                 curentDialogStage.setTitle(answer);
                 curentDialogStage.setScene(curentDialogScene);
+                //curentDialogStage.setFullScreen(true);
                 curentDialogStage.show();
             });
             
@@ -383,7 +357,8 @@ public class MySearchJavaFX extends Application {
             File saveFile = fileChoose.showSaveDialog(primaryStage);
             if(saveFile != null){
                 String path = saveFile.getAbsolutePath();
-                StudentsFile parserDOM = new StudentsFile(path); // + "students.xml"
+                StudentsFile parserDOM = new StudentsFile(path);
+                
                 parserDOM.saveDocument(studentsList, path);
             }
         });
@@ -403,13 +378,15 @@ public class MySearchJavaFX extends Application {
                 for(int iter = 0; iter < newStudents.size(); iter++){  
                     studentsList.add(newStudents.get(iter));
                 }
+                AnchorPane loadTable = paginationTableBuilder.createPaginationTable(studentsList);
                 
-                ObservableList<StudentTableClass> newTableList = 
-                        makeNewTableList(newStudents);
-                tableList.clear();
-                for(int iter = 0; iter < newTableList.size(); iter++){  
-                    tableList.add(newTableList.get(iter));
-                }
+                int tableIndex = 2;
+                anchorPane.getChildren().remove(tableIndex);
+                anchorPane.getChildren().add(loadTable);
+                
+                AnchorPane.setTopAnchor(loadTable, 67.0);
+                AnchorPane.setLeftAnchor(loadTable, 0.0);
+                AnchorPane.setRightAnchor(loadTable, 0.0);
             }
         });
         
@@ -448,19 +425,17 @@ public class MySearchJavaFX extends Application {
         fileMenu.getItems().addAll(menuSaveButton, menuLoadButton);
         editMenu.getItems().addAll(menuAddButton, menuDeleteButton, menuSearchButton);
         menuBar.getMenus().addAll(editMenu, fileMenu);
-        
-        AnchorPane anchorPane = new AnchorPane();
+              
         AnchorPane.setTopAnchor(menuBar, 0.0);
         AnchorPane.setLeftAnchor(menuBar, 0.0);
         AnchorPane.setRightAnchor(menuBar, 0.0);
         AnchorPane.setTopAnchor(toolBar, 25.0);
         AnchorPane.setLeftAnchor(toolBar, 0.0);
         AnchorPane.setRightAnchor(toolBar, 0.0);
-        AnchorPane.setTopAnchor(currentTable, 67.0);
-        AnchorPane.setLeftAnchor(currentTable, 0.0);
-        AnchorPane.setRightAnchor(currentTable, 0.0);
-        AnchorPane.setBottomAnchor(currentTable, 25.0);
-        anchorPane.getChildren().addAll(menuBar, toolBar, currentTable);
+        AnchorPane.setTopAnchor(mainTable, 67.0);
+        AnchorPane.setLeftAnchor(mainTable, 0.0);
+        AnchorPane.setRightAnchor(mainTable, 0.0);
+        anchorPane.getChildren().addAll(menuBar, toolBar, mainTable);
         
         ScrollPane scroll = new ScrollPane();
         scroll.setFitToHeight(true);
@@ -496,47 +471,6 @@ public class MySearchJavaFX extends Application {
         FileChooser.ExtensionFilter extensionFilter = new FileChooser.ExtensionFilter("XML files (*.xml)", "*.xml");
         fileChoose.getExtensionFilters().add(extensionFilter);
         return fileChoose;
-    }
-    
-    public ObservableList<StudentTableClass> makeNewTableList(List<Student> studentsList){
-        ObservableList<StudentTableClass> tableList = FXCollections.observableArrayList();
-        studentsList.forEach ((student) -> {
-            StringBuilder studentFIO = new StringBuilder();
-            studentFIO.append(student.getLastName()).append(" ")
-                      .append(student.getFirstName()).append(" ")
-                      .append(student.getSurName());        
-            model.Parent father = student.getFather();
-            StringBuilder fatherFIO = new StringBuilder();
-            fatherFIO.append(father.getLastName()).append(" ")
-                      .append(father.getFirstName()).append(" ")
-                      .append(father.getSurName()); 
-            MoneyBr fatherSalary = father.getEarnMoney();
-            StringBuilder fatherMoney = new StringBuilder();
-            fatherMoney.append(fatherSalary.getRubles()).append(".")
-                       .append(fatherSalary.getPenny());
-            model.Parent mother = student.getMother();
-            StringBuilder motherFIO = new StringBuilder();
-            motherFIO.append(mother.getLastName()).append(" ")
-                      .append(mother.getFirstName()).append(" ")
-                      .append(mother.getSurName()); 
-            MoneyBr motherSalary = mother.getEarnMoney();
-            StringBuilder motherMoney = new StringBuilder();
-            motherMoney.append(motherSalary.getRubles()).append(".")
-                       .append(motherSalary.getPenny());
-            int numOfBrothers = student.getNumberOfBrothers();
-            int numOfSisters = student.getNumberOfSisters();
-             
-            tableList.add(new StudentTableClass(
-                    studentFIO.toString(),
-                    fatherFIO.toString(),
-                    fatherMoney.toString(),
-                    motherFIO.toString(),
-                    motherMoney.toString(),
-                    String.valueOf(numOfBrothers),
-                    String.valueOf(numOfSisters)
-            ));
-        });
-        return tableList;
     }
     
 }
