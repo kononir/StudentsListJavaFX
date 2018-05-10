@@ -25,14 +25,12 @@ import model.Student;
  * @author Vlad
  */
 public class PaginationTableBuilder {
-    private int rowsPerPage;
+    private int rowsPerPage = 10;
     private int numberOfPages;
     private int pageIndex;
     private int numberOfStudents;
     
-    public PaginationTableBuilder(int rowsPerPage){
-        this.rowsPerPage = rowsPerPage;
-    }
+    public PaginationTableBuilder(){}
     
     public final void setRowsPerPage(int rowsPerPage){
         this.rowsPerPage = rowsPerPage;

@@ -31,11 +31,9 @@ public class MySearchJavaFX extends Application {
         List<Student> studentsList = new ArrayList();
         
         AnchorPane mainPane = new AnchorPane();
-        
-        int rowsPerPage = 10;
                             
         PaginationTableBuilder paginationTableBuilder
-                = new PaginationTableBuilder(rowsPerPage);
+                = new PaginationTableBuilder();
 
         AnchorPane mainTable = paginationTableBuilder.createPaginationTable(studentsList);
         
@@ -191,6 +189,7 @@ public class MySearchJavaFX extends Application {
         toolSearchButton.setOnAction(action -> {
             ChoiceDialog<String> searchChoiceDialog = new ChoiceDialog(
                     "Students FIO",
+                    "Students FIO",
                     "Father FIO",
                     "Mother FIO",
                     "Number of brothers",
@@ -202,150 +201,10 @@ public class MySearchJavaFX extends Application {
             searchChoiceDialog.setHeaderText(null);
             searchChoiceDialog.setContentText("Please, choice searching argument:");
             
-            Optional<String> answerOptional = searchChoiceDialog.showAndWait();
-            answerOptional.ifPresent(answer -> { 
-                Stage curentDialogStage = new Stage();
-                AnchorPane curentDialogAnchorPane = new AnchorPane();
-                
-                List<HBox> hBoxesOfCurrentDialog = new ArrayList();
-                
-                Button curentDialogOk = new Button("OK");
-                
-                Button curentDialogCancel = new Button("Cancel");
-                curentDialogCancel.setOnAction(action2 -> {
-                    curentDialogStage.close();
-                });
-                
-                SearchDialogController currentController 
-                        = new SearchDialogController();
-                
-                currentController.setCurrentStudentsList(studentsList);
-                currentController.setClassOfSearchArg(answer); 
-                                
-                switch(answer){
-                    case "Students FIO":                                                                                     
-                    case "Father FIO":
-                    case "Mother FIO":
-                        Label firstNameLabel = new Label("First name");
-                        TextField firstNameTextField = new TextField();        
-                        hBoxesOfCurrentDialog.add(makeNewHBox(
-                                firstNameLabel,
-                                firstNameTextField,
-                                63
-                        ));
-
-                        Label surNameLabel = new Label("Surname");
-                        TextField surNameTextField = new TextField();        
-                        hBoxesOfCurrentDialog.add(makeNewHBox(
-                                surNameLabel,
-                                surNameTextField,
-                                70
-                        ));
-
-                        Label lastNameLabel = new Label("Last name");
-                        TextField lastNameTextField = new TextField();        
-                        hBoxesOfCurrentDialog.add(makeNewHBox(
-                                lastNameLabel,
-                                lastNameTextField,
-                                63
-                        ));
-                      
-                        curentDialogOk.setOnAction(action1 -> {
-                            String firstName = firstNameTextField.getText();
-                            String surName = surNameTextField.getText();
-                            String lastName = lastNameTextField.getText();
-                            
-                            String searchArg = firstName + " " + surName 
-                                             + " " + lastName;
-                            currentController.setSearchArg(searchArg);
-                            
-                            List<Student> listOfFidingStudents 
-                                    = currentController.findInformation();
-                                                        
-                            int dialogRowsPerPage = 10;
-                            
-                            PaginationTableBuilder paginationBuilder
-                                    = new PaginationTableBuilder(dialogRowsPerPage);
-                                                   
-                            AnchorPane dialogTable = paginationBuilder
-                                    .createPaginationTable(listOfFidingStudents);
-                                                                                   
-                            curentDialogAnchorPane.getChildren().add(dialogTable);
-                            AnchorPane.setTopAnchor(dialogTable, 120.0);
-                            AnchorPane.setLeftAnchor(dialogTable, 0.0);
-                            AnchorPane.setBottomAnchor(dialogTable, 50.0);
-                            AnchorPane.setRightAnchor(dialogTable, 20.0);
-                            
-                            
-                        });
-                        
-                        break;
-                    case "Number of brothers":
-                    case "Number of sisters":
-                        Label numberLabel = new Label("Number");
-                        TextField numberTextField = new TextField();
-                        hBoxesOfCurrentDialog.add(makeNewHBox(
-                                numberLabel,
-                                numberTextField,
-                                25
-                        ));
-                        
-                        break;
-                    case "Father salary":
-                    case "Mother salary":
-                        Label salaryRublesLabel = new Label("Salary, rubles");
-                        TextField salaryRublesTextField = new TextField();
-                        hBoxesOfCurrentDialog.add(makeNewHBox(
-                                salaryRublesLabel,
-                                salaryRublesTextField,
-                                53
-                        ));
-
-                        Label salaryPennyLabel = new Label("Salary, penny");
-                        TextField salaryPennyTextField = new TextField();
-                        hBoxesOfCurrentDialog.add(makeNewHBox(
-                                salaryPennyLabel,
-                                salaryPennyTextField,
-                                51
-                        ));
-                        
-                        break;
-                }
-                
-                VBox curentDialogVBox = new VBox();
-                curentDialogVBox.setSpacing(10);
-                curentDialogVBox.setPadding(new Insets(15,20,10,10));
-                for(int iter = 0; iter < hBoxesOfCurrentDialog.size(); iter++){
-                    HBox iterHBox = hBoxesOfCurrentDialog.get(iter);                                  
-                    curentDialogVBox.getChildren().add(iterHBox);
-                }
-
-                HBox curentDialogHBoxWithButtons 
-                        = makeNewHBox(curentDialogOk, curentDialogCancel, 1);
-                                             
-                AnchorPane.setTopAnchor(curentDialogVBox, 5.0);
-                AnchorPane.setLeftAnchor(curentDialogVBox, 5.0);
-                AnchorPane.setBottomAnchor(curentDialogHBoxWithButtons, 10.0);
-                AnchorPane.setRightAnchor(curentDialogHBoxWithButtons, 10.0);
-                curentDialogAnchorPane.getChildren().addAll(
-                        curentDialogVBox, 
-                        curentDialogHBoxWithButtons
-                ); 
-                
-                ScrollPane scroll = new ScrollPane();
-                scroll.setFitToHeight(true);
-                scroll.setFitToWidth(true);
-                scroll.setContent(curentDialogAnchorPane);
-                scroll.setPannable(true);  
-
-                Scene curentDialogScene = new Scene(scroll, 600, 500);              
-                
-                //curentDialogStage.initStyle(StageStyle.UTILITY);
-                curentDialogStage.setTitle(answer);
-                curentDialogStage.setScene(curentDialogScene);
-                //curentDialogStage.setFullScreen(true);
-                curentDialogStage.show();
-            });
+            SearchingController searchingController
+                    = new SearchingController(searchChoiceDialog);
+            
+            searchingController.controll(studentsList);
             
             
         });
