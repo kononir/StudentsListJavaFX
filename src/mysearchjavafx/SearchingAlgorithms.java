@@ -7,6 +7,7 @@ package mysearchjavafx;
 
 import java.util.ArrayList;
 import java.util.List;
+import model.MoneyBr;
 import model.Parent;
 import model.Person;
 import model.Student;
@@ -95,14 +96,112 @@ public class SearchingAlgorithms {
                 
             case "Father salary by lower limit":
                 currentStudentsList.forEach(student -> {
-                    int numberOfSisters = student.getNumberOfSisters();
-                    int searchArgInteger = Integer.parseInt(searchArg);
+                    Parent father = student.getFather();
+                    MoneyBr salary = father.getEarnMoney();
+                    int salaryRubles = salary.getRubles();
+                    int salaryPenny = salary.getPenny();
+                    double salaryDouble = (double)salaryRubles + (double)salaryPenny;
                     
-                    if(numberOfSisters == searchArgInteger){
+                    double searchArgDouble = Double.parseDouble(searchArg);
+                    
+                    if(salaryDouble > searchArgDouble){
                         listOfFidingStudents.add(student);
                     }                 
                 });                    
                 
+                break;
+                
+            case "Father salary by upper limit":
+                currentStudentsList.forEach(student -> {
+                    Parent father = student.getFather();
+                    MoneyBr salary = father.getEarnMoney();
+                    int salaryRubles = salary.getRubles();
+                    int salaryPenny = salary.getPenny();
+                    double salaryDouble = (double)salaryRubles + (double)salaryPenny;
+                    
+                    double searchArgDouble = Double.parseDouble(searchArg);
+
+                    if(salaryDouble < searchArgDouble){
+                        listOfFidingStudents.add(student);
+                    }                 
+                });                    
+
+                break; 
+                
+            case "Father salary by both limits":
+                currentStudentsList.forEach(student -> {
+                    Parent father = student.getFather();
+                    MoneyBr salary = father.getEarnMoney();
+                    int salaryRubles = salary.getRubles();
+                    int salaryPenny = salary.getPenny();
+                    double salaryDouble = (double)salaryRubles + (double)salaryPenny;
+                    
+                    String[] searchArgMas = searchArg.split(",");
+                    String lowerSalaryString = searchArgMas[0];
+                    String upperSalaryString = searchArgMas[1];
+                    double lowerSalaryDouble = Double.parseDouble(lowerSalaryString);
+                    double upperSalaryDouble = Double.parseDouble(upperSalaryString);
+
+                    if(lowerSalaryDouble < salaryDouble 
+                            && salaryDouble < upperSalaryDouble){
+                        listOfFidingStudents.add(student);
+                    }                 
+                });                    
+                
+            case "Mother salary by lower limit":
+                currentStudentsList.forEach(student -> {
+                    Parent mother = student.getMother();
+                    MoneyBr salary = mother.getEarnMoney();
+                    int salaryRubles = salary.getRubles();
+                    int salaryPenny = salary.getPenny();
+                    double salaryDouble = (double)salaryRubles + (double)salaryPenny;
+
+                    double searchArgDouble = Double.parseDouble(searchArg);
+
+                    if(salaryDouble > searchArgDouble){
+                        listOfFidingStudents.add(student);
+                    }                 
+                });                    
+
+                break;
+
+            case "Mother salary by upper limit":
+                currentStudentsList.forEach(student -> {
+                    Parent mother = student.getMother();
+                    MoneyBr salary = mother.getEarnMoney();
+                    int salaryRubles = salary.getRubles();
+                    int salaryPenny = salary.getPenny();
+                    double salaryDouble = (double)salaryRubles + (double)salaryPenny;
+
+                    double searchArgDouble = Double.parseDouble(searchArg);
+
+                    if(salaryDouble < searchArgDouble){
+                        listOfFidingStudents.add(student);
+                    }                 
+                });                    
+
+                break; 
+
+            case "Mother salary by both limits":
+                currentStudentsList.forEach(student -> {
+                    Parent mother = student.getFather();
+                    MoneyBr salary = mother.getEarnMoney();
+                    int salaryRubles = salary.getRubles();
+                    int salaryPenny = salary.getPenny();
+                    double salaryDouble = (double)salaryRubles + (double)salaryPenny;
+
+                    String[] searchArgMas = searchArg.split(",");
+                    String lowerSalaryString = searchArgMas[0];
+                    String upperSalaryString = searchArgMas[1];
+                    double lowerSalaryDouble = Double.parseDouble(lowerSalaryString);
+                    double upperSalaryDouble = Double.parseDouble(upperSalaryString);
+
+                    if(lowerSalaryDouble < salaryDouble 
+                            && salaryDouble < upperSalaryDouble){
+                        listOfFidingStudents.add(student);
+                    }                 
+                });   
+
                 break; 
         }
         

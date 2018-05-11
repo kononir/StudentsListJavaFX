@@ -201,8 +201,10 @@ public class MySearchJavaFX extends Application {
             searchChoiceDialog.setHeaderText(null);
             searchChoiceDialog.setContentText("Please, choice searching argument:");
             
+            Optional<String> answerOptional = searchChoiceDialog.showAndWait();
+            
             SearchingController searchingController
-                    = new SearchingController(searchChoiceDialog);
+                    = new SearchingController(answerOptional);
             
             searchingController.controll(studentsList);
             

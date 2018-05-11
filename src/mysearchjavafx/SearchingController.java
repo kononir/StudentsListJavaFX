@@ -26,18 +26,24 @@ import model.Student;
  * @author vlad
  */
 public class SearchingController {
-    final private ChoiceDialog searchChoiceDialog;
+    final private Optional<String> answerOptional;
     
-    public SearchingController(ChoiceDialog searchChoiceDialog){
-        this.searchChoiceDialog = searchChoiceDialog;
+    public SearchingController(Optional<String> answerOptional){
+        this.answerOptional = answerOptional;
     }
     
     public final void controll(List<Student> studentsList){
-        Optional<String> answerOptional = searchChoiceDialog.showAndWait();
-        
+               
         answerOptional.ifPresent(answer -> { 
             Stage curentDialogStage = new Stage();
+            
             AnchorPane curentDialogAnchorPane = new AnchorPane();
+            
+            ScrollPane scroll = new ScrollPane();
+            scroll.setFitToHeight(true);
+            scroll.setFitToWidth(true);
+            scroll.setContent(curentDialogAnchorPane);
+            scroll.setPannable(true); 
 
             List<HBox> hBoxesOfCurrentDialog = new ArrayList();
 
@@ -133,29 +139,29 @@ public class SearchingController {
                     Optional<String> answerLimitOptional = searchLimitChoiceDialog.showAndWait();
         
                     answerLimitOptional.ifPresent(answerLimit -> {
-                        String searchArgType = answer + answerLimit;
+                        String searchArgType = answer + " " + answerLimit;
                         
                         switch(answerLimit){
                             case("by lower limit"):
-                                curentDialogOk.setOnAction(findBySalaryAction -> {
-                                    Label salaryRublesLabel = new Label("Lower limit, rubles");
-                                    TextField salaryRublesTextField = new TextField();
+                                Label lowerSalaryRublesLabel = new Label("Lower limit, rubles");
+                                    TextField lowerSalaryRublesTextField = new TextField();
                                     hBoxesOfCurrentDialog.add(makeNewHBox(
-                                            salaryRublesLabel,
-                                            salaryRublesTextField,
+                                            lowerSalaryRublesLabel,
+                                            lowerSalaryRublesTextField,
                                             53
                                     ));
 
-                                    Label salaryPennyLabel = new Label("Lower limit, penny");
-                                    TextField salaryPennyTextField = new TextField();
+                                    Label lowerSalaryPennyLabel = new Label("Lower limit, penny");
+                                    TextField lowerSalaryPennyTextField = new TextField();
                                     hBoxesOfCurrentDialog.add(makeNewHBox(
-                                            salaryPennyLabel,
-                                            salaryPennyTextField,
+                                            lowerSalaryPennyLabel,
+                                            lowerSalaryPennyTextField,
                                             51
                                     ));
                                     
-                                    String salaryRubles = salaryRublesTextField.getText();
-                                    String salaryPenny = salaryPennyTextField.getText();
+                                curentDialogOk.setOnAction(findBySalaryAction -> {
+                                    String salaryRubles = lowerSalaryRublesTextField.getText();
+                                    String salaryPenny = lowerSalaryPennyTextField.getText();
 
                                     String salary = salaryRubles + "." + salaryPenny;
 
@@ -171,25 +177,25 @@ public class SearchingController {
                                 });
                             
                             case("by upper limit"):
-                                curentDialogOk.setOnAction(findBySalaryAction -> {
-                                    Label salaryRublesLabel = new Label("Upper limit, rubles");
-                                    TextField salaryRublesTextField = new TextField();
-                                    hBoxesOfCurrentDialog.add(makeNewHBox(
-                                            salaryRublesLabel,
-                                            salaryRublesTextField,
-                                            53
-                                    ));
+                                Label upperSalaryRublesLabel = new Label("Upper limit, rubles");
+                                TextField upperSalaryRublesTextField = new TextField();
+                                hBoxesOfCurrentDialog.add(makeNewHBox(
+                                        upperSalaryRublesLabel,
+                                        upperSalaryRublesTextField,
+                                        53
+                                ));
 
-                                    Label salaryPennyLabel = new Label("Upper limit, penny");
-                                    TextField salaryPennyTextField = new TextField();
-                                    hBoxesOfCurrentDialog.add(makeNewHBox(
-                                            salaryPennyLabel,
-                                            salaryPennyTextField,
-                                            51
-                                    ));
+                                Label upperSalaryPennyLabel = new Label("Upper limit, penny");
+                                TextField upperSalaryPennyTextField = new TextField();
+                                hBoxesOfCurrentDialog.add(makeNewHBox(
+                                        upperSalaryPennyLabel,
+                                        upperSalaryPennyTextField,
+                                        51
+                                ));
                                     
-                                    String salaryRubles = salaryRublesTextField.getText();
-                                    String salaryPenny = salaryPennyTextField.getText();
+                                curentDialogOk.setOnAction(findBySalaryAction -> {                                    
+                                    String salaryRubles = upperSalaryRublesTextField.getText();
+                                    String salaryPenny = upperSalaryPennyTextField.getText();
 
                                     String salary = salaryRubles + "." + salaryPenny;
 
@@ -205,27 +211,61 @@ public class SearchingController {
                                 });
                             
                             case("by both limits"):
+                                Label bothLowerSalaryRublesLabel
+                                        = new Label("Lower limit, rubles");
+                                TextField bothLowerSalaryRublesTextField
+                                        = new TextField();
+                                hBoxesOfCurrentDialog.add(makeNewHBox(
+                                        bothLowerSalaryRublesLabel,
+                                        bothLowerSalaryRublesTextField,
+                                        53
+                                ));
+
+                                Label bothLowerSalaryPennyLabel
+                                        = new Label("Lower limit, penny");
+                                TextField bothLowerSalaryPennyTextField
+                                        = new TextField();
+                                hBoxesOfCurrentDialog.add(makeNewHBox(
+                                        bothLowerSalaryPennyLabel,
+                                        bothLowerSalaryPennyTextField,
+                                        51
+                                ));
+
+                                Label bothUpperSalaryRublesLabel
+                                        = new Label("Upper limit, rubles");
+                                TextField bothUpperSalaryRublesTextField
+                                        = new TextField();
+                                hBoxesOfCurrentDialog.add(makeNewHBox(
+                                        bothUpperSalaryRublesLabel,
+                                        bothUpperSalaryRublesTextField,
+                                        53
+                                ));
+
+                                Label bothUpperSalaryPennyLabel
+                                        = new Label("Upper limit, penny");
+                                TextField bothUpperSalaryPennyTextField
+                                        = new TextField();
+                                hBoxesOfCurrentDialog.add(makeNewHBox(
+                                        bothUpperSalaryPennyLabel,
+                                        bothUpperSalaryPennyTextField,
+                                        51
+                                ));
+
                                 curentDialogOk.setOnAction(findBySalaryAction -> {
-                                    Label salaryRublesLabel = new Label("Salary, rubles");
-                                    TextField salaryRublesTextField = new TextField();
-                                    hBoxesOfCurrentDialog.add(makeNewHBox(
-                                            salaryRublesLabel,
-                                            salaryRublesTextField,
-                                            53
-                                    ));
 
-                                    Label salaryPennyLabel = new Label("Salary, penny");
-                                    TextField salaryPennyTextField = new TextField();
-                                    hBoxesOfCurrentDialog.add(makeNewHBox(
-                                            salaryPennyLabel,
-                                            salaryPennyTextField,
-                                            51
-                                    ));
-                                    
-                                    String salaryRubles = salaryRublesTextField.getText();
-                                    String salaryPenny = salaryPennyTextField.getText();
+                                    String lowerSalaryRubles
+                                            = bothLowerSalaryRublesTextField.getText();
+                                    String lowerSalaryPenny
+                                            = bothLowerSalaryPennyTextField.getText();
+                                    String upperSalaryRubles
+                                            = bothUpperSalaryRublesTextField.getText();
+                                    String upperSalaryPenny
+                                            = bothUpperSalaryPennyTextField.getText();
 
-                                    String salary = salaryRubles + "." + salaryPenny;
+                                    String salary = lowerSalaryRubles + "."
+                                                  + lowerSalaryPenny + ","
+                                                  + upperSalaryRubles + "."
+                                                  + upperSalaryPenny;
 
                                     String searchArg = salary;
 
@@ -263,12 +303,6 @@ public class SearchingController {
                     curentDialogVBox, 
                     curentDialogHBoxWithButtons
             ); 
-
-            ScrollPane scroll = new ScrollPane();
-            scroll.setFitToHeight(true);
-            scroll.setFitToWidth(true);
-            scroll.setContent(curentDialogAnchorPane);
-            scroll.setPannable(true);  
 
             Scene curentDialogScene = new Scene(scroll, 600, 500);
             curentDialogStage.setTitle(answer);
@@ -308,4 +342,13 @@ public class SearchingController {
         AnchorPane.setLeftAnchor(dialogTable, 0.0);
         AnchorPane.setBottomAnchor(dialogTable, 0.0);
     }
+    
+    private void bothLimitsCase(){
+        
+    }
+    
+    private void newDialogStage(){
+        
+    }
+    
 }
