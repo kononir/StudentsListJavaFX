@@ -8,6 +8,7 @@ package mysearchjavafx;
 import java.util.Optional;
 import java.util.ArrayList;
 import java.io.*;
+import java.util.Arrays;
 import java.util.List;
 import javafx.application.*;
 import javafx.scene.*;
@@ -206,13 +207,7 @@ public class MySearchJavaFX extends Application {
             answerOptional.ifPresent(answer -> { 
                 Stage curentDialogStage = new Stage();
 
-                AnchorPane curentDialogAnchorPane = new;
-
-                ScrollPane scroll = new ScrollPane();
-                scroll.setFitToHeight(true);
-                scroll.setFitToWidth(true);
-                scroll.setContent(curentDialogAnchorPane);
-                scroll.setPannable(true); 
+                AnchorPane curentDialogAnchorPane = new AnchorPane();
 
                 List<HBox> hBoxesOfCurrentDialog = new ArrayList();
 
@@ -222,6 +217,8 @@ public class MySearchJavaFX extends Application {
                 curentDialogCancel.setOnAction(action2 -> {
                     curentDialogStage.close();
                 });
+                
+                AnchorPane currentScopeAnchorPane = curentDialogAnchorPane;
 
                 switch(answer){
                     case "Students FIO":                                                                                     
@@ -251,36 +248,22 @@ public class MySearchJavaFX extends Application {
                                 63
                         ));
 
-                        curentDialogOk.setOnAction(findByNameAction -> {
-                            SearchingController searchingController
-                        = new SearchingController(answerOptional);
+                        
+                        SearchingController nameSearchingController 
+                                = new SearchingController(
+                                        curentDialogAnchorPane,
+                                        curentDialogOk,
+                                        studentsList,
+                                        answer
+                                );
 
-                searchingController.controll(studentsList);
+                        List<TextField> dialogTextFields = Arrays.asList(
+                                firstNameTextField,
+                                surNameTextField,
+                                lastNameTextField
+                        );
 
-                            String firstName = firstNameTextField.getText();
-                            String surName = surNameTextField.getText();
-                            String lastName = lastNameTextField.getText();
-
-                            String fullName  = firstName + " " + surName 
-                                             + " " + lastName;
-
-                            String searchArg = fullName;
-
-                            SearchingAlgorithms searching = new SearchingAlgorithms(
-                                    studentsList,
-                                    answer
-                            );
-
-                            List<Student> listOfFidingStudents 
-                                    = searching.findInformation(searchArg);
-
-                            newDialogTable(
-                                    listOfFidingStudents,
-                                    answer
-                            );
-
-                            curentDialogAnchorPane.getChildren().add(dialogTable);
-                        });
+                        nameSearchingController.controlFullNameButton(dialogTextFields);
 
                         break;
                     case "Number of brothers":
@@ -292,18 +275,18 @@ public class MySearchJavaFX extends Application {
                                 numberTextField,
                                 25
                         ));
+                        
+                        SearchingController relativesSearchingController 
+                                = new SearchingController(
+                                        curentDialogAnchorPane,
+                                        curentDialogOk,
+                                        studentsList,
+                                        answer
+                                );
 
-                        curentDialogOk.setOnAction(findByRelativesNumberAction -> {
-                            String relativesNumber = numberTextField.getText();
-                            String searchArg = relativesNumber;
-
-                            newDialogTable(
-                                    studentsList,
-                                    answer,
-                                    searchArg,                                
-                                    curentDialogAnchorPane
-                            );
-                        });
+                        relativesSearchingController.controlNumberOfRelativesButton(
+                                numberTextField
+                        );
 
                         break;
                     case "Father salary":
@@ -318,9 +301,11 @@ public class MySearchJavaFX extends Application {
                         searchLimitChoiceDialog.setHeaderText(null);
                         searchLimitChoiceDialog.setContentText("Please, choice searching argument:");
 
-                        Optional<String> answerLimitOptional = searchLimitChoiceDialog.showAndWait();
+                        Optional<String> answerLimitOptional
+                                = searchLimitChoiceDialog.showAndWait();
 
                         answerLimitOptional.ifPresent(answerLimit -> {
+                            
                             String searchArgType = answer + " " + answerLimit;
 
                             switch(answerLimit){
@@ -341,22 +326,20 @@ public class MySearchJavaFX extends Application {
                                             51
                                     ));
 
-                                    curentDialogOk.setOnAction(findBySalaryAction -> {
-                                        String salaryRubles = lowerSalaryRublesTextField.getText();
-                                        String salaryPenny = lowerSalaryPennyTextField.getText();
+                                    SearchingController lowerLimitSalarySearchingController 
+                                            = new SearchingController(
+                                                    currentScopeAnchorPane,
+                                                    curentDialogOk,
+                                                    studentsList,
+                                                    answer
+                                            );
 
-                                        String salary = salaryRubles + "." + salaryPenny;
+                                    List<TextField> dialogTextFields = Arrays.asList(
+                                            lowerSalaryRublesTextField,
+                                            lowerSalaryPennyTextField
+                                    );
 
-                                        String searchArg = salary;
-
-                                        newDialogTable(
-                                                studentsList,
-                                                searchArgType,
-                                                searchArg,                                
-                                                curentDialogAnchorPane
-                                        );
-
-                                    });
+                                    nameSearchingController.controlSalaryLowerLimitButton(dialogTextFields);
 
                                 case("by upper limit"):
                                     Label upperSalaryRublesLabel = new Label("Upper limit, rubles");
@@ -464,15 +447,28 @@ public class MySearchJavaFX extends Application {
                         });                    
 
                         break;
-                }
-
+                }                
             
+            VBox curentDialogVBox = makeNewDialogVBox(hBoxesOfCurrentDialog);
+                
+            HBox currentDialogHBoxWithButtons = makeDialogHBoxWithButtons(
+                    curentDialogOk,
+                    curentDialogCancel
+            );
+
+            curentDialogAnchorPane = newDialogPane(
+                    curentDialogVBox,
+                    currentDialogHBoxWithButtons
+            ); 
+            
+            ScrollPane scroll = newDialogScroling(curentDialogAnchorPane);
 
             Scene curentDialogScene = new Scene(scroll, 600, 500);
             curentDialogStage.setTitle(answer);
             curentDialogStage.setScene(curentDialogScene);
             curentDialogStage.show();
-        });
+            
+            });
         });
         
         Button toolSaveButton = new Button();
@@ -600,23 +596,32 @@ public class MySearchJavaFX extends Application {
         fileChoose.getExtensionFilters().add(extensionFilter);
         return fileChoose;
     }
+    
+    private ScrollPane newDialogScroling(AnchorPane curentDialogAnchorPane){
+        ScrollPane scroll = new ScrollPane();
+        scroll.setFitToHeight(true);
+        scroll.setFitToWidth(true);
+        scroll.setContent(curentDialogAnchorPane);
+        scroll.setPannable(true); 
+        return scroll;
+    }
        
-    private AnchorPane newDialogPane(VBox curentDialogVBox){
+    private AnchorPane newDialogPane(
+            VBox curentDialogVBox,
+            HBox currentDialogHBoxWithButtons
+    ){
         AnchorPane curentDialogAnchorPane = new AnchorPane();
-        
-        
-
-        HBox dialogHBoxWithButtons 
-                = makeNewHBox(curentDialogOk, curentDialogCancel, 1);
 
         AnchorPane.setTopAnchor(curentDialogVBox, 5.0);
         AnchorPane.setLeftAnchor(curentDialogVBox, 5.0);
-        AnchorPane.setBottomAnchor(dialogHBoxWithButtons, 10.0);
-        AnchorPane.setRightAnchor(dialogHBoxWithButtons, 10.0);
+        AnchorPane.setBottomAnchor(currentDialogHBoxWithButtons, 10.0);
+        AnchorPane.setRightAnchor(currentDialogHBoxWithButtons, 10.0);
         curentDialogAnchorPane.getChildren().addAll(
                 curentDialogVBox, 
-                dialogHBoxWithButtons
+                currentDialogHBoxWithButtons
         ); 
+        
+        return curentDialogAnchorPane;
     }
     
     private VBox makeNewDialogVBox(List<HBox> hBoxesOfCurrentDialog){
