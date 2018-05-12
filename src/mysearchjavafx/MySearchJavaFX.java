@@ -203,12 +203,276 @@ public class MySearchJavaFX extends Application {
             
             Optional<String> answerOptional = searchChoiceDialog.showAndWait();
             
-            SearchingController searchingController
-                    = new SearchingController(answerOptional);
+            answerOptional.ifPresent(answer -> { 
+                Stage curentDialogStage = new Stage();
+
+                AnchorPane curentDialogAnchorPane = new;
+
+                ScrollPane scroll = new ScrollPane();
+                scroll.setFitToHeight(true);
+                scroll.setFitToWidth(true);
+                scroll.setContent(curentDialogAnchorPane);
+                scroll.setPannable(true); 
+
+                List<HBox> hBoxesOfCurrentDialog = new ArrayList();
+
+                Button curentDialogOk = new Button("OK");
+
+                Button curentDialogCancel = new Button("Cancel");
+                curentDialogCancel.setOnAction(action2 -> {
+                    curentDialogStage.close();
+                });
+
+                switch(answer){
+                    case "Students FIO":                                                                                     
+                    case "Father FIO":
+                    case "Mother FIO":
+                        Label firstNameLabel = new Label("First name");
+                        TextField firstNameTextField = new TextField();        
+                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                firstNameLabel,
+                                firstNameTextField,
+                                63
+                        ));
+
+                        Label surNameLabel = new Label("Surname");
+                        TextField surNameTextField = new TextField();        
+                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                surNameLabel,
+                                surNameTextField,
+                                70
+                        ));
+
+                        Label lastNameLabel = new Label("Last name");
+                        TextField lastNameTextField = new TextField();        
+                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                lastNameLabel,
+                                lastNameTextField,
+                                63
+                        ));
+
+                        curentDialogOk.setOnAction(findByNameAction -> {
+                            SearchingController searchingController
+                        = new SearchingController(answerOptional);
+
+                searchingController.controll(studentsList);
+
+                            String firstName = firstNameTextField.getText();
+                            String surName = surNameTextField.getText();
+                            String lastName = lastNameTextField.getText();
+
+                            String fullName  = firstName + " " + surName 
+                                             + " " + lastName;
+
+                            String searchArg = fullName;
+
+                            SearchingAlgorithms searching = new SearchingAlgorithms(
+                                    studentsList,
+                                    answer
+                            );
+
+                            List<Student> listOfFidingStudents 
+                                    = searching.findInformation(searchArg);
+
+                            newDialogTable(
+                                    listOfFidingStudents,
+                                    answer
+                            );
+
+                            curentDialogAnchorPane.getChildren().add(dialogTable);
+                        });
+
+                        break;
+                    case "Number of brothers":
+                    case "Number of sisters":
+                        Label numberLabel = new Label("Number");
+                        TextField numberTextField = new TextField();
+                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                numberLabel,
+                                numberTextField,
+                                25
+                        ));
+
+                        curentDialogOk.setOnAction(findByRelativesNumberAction -> {
+                            String relativesNumber = numberTextField.getText();
+                            String searchArg = relativesNumber;
+
+                            newDialogTable(
+                                    studentsList,
+                                    answer,
+                                    searchArg,                                
+                                    curentDialogAnchorPane
+                            );
+                        });
+
+                        break;
+                    case "Father salary":
+                    case "Mother salary":
+                        ChoiceDialog<String> searchLimitChoiceDialog = new ChoiceDialog(
+                                "by lower limit",
+                                "by lower limit",
+                                "by upper limit",
+                                "by both limits"
+                        );
+                        searchLimitChoiceDialog.setTitle("JavaFX");
+                        searchLimitChoiceDialog.setHeaderText(null);
+                        searchLimitChoiceDialog.setContentText("Please, choice searching argument:");
+
+                        Optional<String> answerLimitOptional = searchLimitChoiceDialog.showAndWait();
+
+                        answerLimitOptional.ifPresent(answerLimit -> {
+                            String searchArgType = answer + " " + answerLimit;
+
+                            switch(answerLimit){
+                                case("by lower limit"):
+                                    Label lowerSalaryRublesLabel = new Label("Lower limit, rubles");
+                                    TextField lowerSalaryRublesTextField = new TextField();
+                                    hBoxesOfCurrentDialog.add(makeNewHBox(
+                                            lowerSalaryRublesLabel,
+                                            lowerSalaryRublesTextField,
+                                            53
+                                    ));
+
+                                    Label lowerSalaryPennyLabel = new Label("Lower limit, penny");
+                                    TextField lowerSalaryPennyTextField = new TextField();
+                                    hBoxesOfCurrentDialog.add(makeNewHBox(
+                                            lowerSalaryPennyLabel,
+                                            lowerSalaryPennyTextField,
+                                            51
+                                    ));
+
+                                    curentDialogOk.setOnAction(findBySalaryAction -> {
+                                        String salaryRubles = lowerSalaryRublesTextField.getText();
+                                        String salaryPenny = lowerSalaryPennyTextField.getText();
+
+                                        String salary = salaryRubles + "." + salaryPenny;
+
+                                        String searchArg = salary;
+
+                                        newDialogTable(
+                                                studentsList,
+                                                searchArgType,
+                                                searchArg,                                
+                                                curentDialogAnchorPane
+                                        );
+
+                                    });
+
+                                case("by upper limit"):
+                                    Label upperSalaryRublesLabel = new Label("Upper limit, rubles");
+                                    TextField upperSalaryRublesTextField = new TextField();
+                                    hBoxesOfCurrentDialog.add(makeNewHBox(
+                                            upperSalaryRublesLabel,
+                                            upperSalaryRublesTextField,
+                                            53
+                                    ));
+
+                                    Label upperSalaryPennyLabel = new Label("Upper limit, penny");
+                                    TextField upperSalaryPennyTextField = new TextField();
+                                    hBoxesOfCurrentDialog.add(makeNewHBox(
+                                            upperSalaryPennyLabel,
+                                            upperSalaryPennyTextField,
+                                            51
+                                    ));
+
+                                    curentDialogOk.setOnAction(findBySalaryAction -> {                                    
+                                        String salaryRubles = upperSalaryRublesTextField.getText();
+                                        String salaryPenny = upperSalaryPennyTextField.getText();
+
+                                        String salary = salaryRubles + "." + salaryPenny;
+
+                                        String searchArg = salary;
+
+                                        newDialogTable(
+                                                studentsList,
+                                                searchArgType,
+                                                searchArg,                                
+                                                curentDialogAnchorPane
+                                        );
+
+                                    });
+
+                                case("by both limits"):
+                                    Label bothLowerSalaryRublesLabel
+                                            = new Label("Lower limit, rubles");
+                                    TextField bothLowerSalaryRublesTextField
+                                            = new TextField();
+                                    hBoxesOfCurrentDialog.add(makeNewHBox(
+                                            bothLowerSalaryRublesLabel,
+                                            bothLowerSalaryRublesTextField,
+                                            53
+                                    ));
+
+                                    Label bothLowerSalaryPennyLabel
+                                            = new Label("Lower limit, penny");
+                                    TextField bothLowerSalaryPennyTextField
+                                            = new TextField();
+                                    hBoxesOfCurrentDialog.add(makeNewHBox(
+                                            bothLowerSalaryPennyLabel,
+                                            bothLowerSalaryPennyTextField,
+                                            51
+                                    ));
+
+                                    Label bothUpperSalaryRublesLabel
+                                            = new Label("Upper limit, rubles");
+                                    TextField bothUpperSalaryRublesTextField
+                                            = new TextField();
+                                    hBoxesOfCurrentDialog.add(makeNewHBox(
+                                            bothUpperSalaryRublesLabel,
+                                            bothUpperSalaryRublesTextField,
+                                            53
+                                    ));
+
+                                    Label bothUpperSalaryPennyLabel
+                                            = new Label("Upper limit, penny");
+                                    TextField bothUpperSalaryPennyTextField
+                                            = new TextField();
+                                    hBoxesOfCurrentDialog.add(makeNewHBox(
+                                            bothUpperSalaryPennyLabel,
+                                            bothUpperSalaryPennyTextField,
+                                            51
+                                    ));
+
+                                    curentDialogOk.setOnAction(findBySalaryAction -> {
+
+                                        String lowerSalaryRubles
+                                                = bothLowerSalaryRublesTextField.getText();
+                                        String lowerSalaryPenny
+                                                = bothLowerSalaryPennyTextField.getText();
+                                        String upperSalaryRubles
+                                                = bothUpperSalaryRublesTextField.getText();
+                                        String upperSalaryPenny
+                                                = bothUpperSalaryPennyTextField.getText();
+
+                                        String salary = lowerSalaryRubles + "."
+                                                      + lowerSalaryPenny + ","
+                                                      + upperSalaryRubles + "."
+                                                      + upperSalaryPenny;
+
+                                        String searchArg = salary;
+
+                                        newDialogTable(
+                                                studentsList,
+                                                searchArgType,
+                                                searchArg,                                
+                                                curentDialogAnchorPane
+                                        );
+
+                                    });
+                            }
+
+                        });                    
+
+                        break;
+                }
+
             
-            searchingController.controll(studentsList);
-            
-            
+
+            Scene curentDialogScene = new Scene(scroll, 600, 500);
+            curentDialogStage.setTitle(answer);
+            curentDialogStage.setScene(curentDialogScene);
+            curentDialogStage.show();
+        });
         });
         
         Button toolSaveButton = new Button();
@@ -336,5 +600,44 @@ public class MySearchJavaFX extends Application {
         fileChoose.getExtensionFilters().add(extensionFilter);
         return fileChoose;
     }
+       
+    private AnchorPane newDialogPane(VBox curentDialogVBox){
+        AnchorPane curentDialogAnchorPane = new AnchorPane();
+        
+        
+
+        HBox dialogHBoxWithButtons 
+                = makeNewHBox(curentDialogOk, curentDialogCancel, 1);
+
+        AnchorPane.setTopAnchor(curentDialogVBox, 5.0);
+        AnchorPane.setLeftAnchor(curentDialogVBox, 5.0);
+        AnchorPane.setBottomAnchor(dialogHBoxWithButtons, 10.0);
+        AnchorPane.setRightAnchor(dialogHBoxWithButtons, 10.0);
+        curentDialogAnchorPane.getChildren().addAll(
+                curentDialogVBox, 
+                dialogHBoxWithButtons
+        ); 
+    }
     
+    private VBox makeNewDialogVBox(List<HBox> hBoxesOfCurrentDialog){
+        VBox curentDialogVBox = new VBox();
+        curentDialogVBox.setSpacing(10);
+        curentDialogVBox.setPadding(new Insets(15,20,10,10));
+        for(int iter = 0; iter < hBoxesOfCurrentDialog.size(); iter++){
+            HBox iterHBox = hBoxesOfCurrentDialog.get(iter);                                  
+            curentDialogVBox.getChildren().add(iterHBox);
+        }
+        
+        return curentDialogVBox;
+    }
+    
+    private HBox makeDialogHBoxWithButtons(
+            Button curentDialogOk,
+            Button curentDialogCancel
+    ){
+        HBox currentDialogHBoxWithButtons 
+                = makeNewHBox(curentDialogOk, curentDialogCancel, 1);
+        
+        return currentDialogHBoxWithButtons;
+    }
 }
