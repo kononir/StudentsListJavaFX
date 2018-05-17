@@ -8,33 +8,27 @@ package mysearchjavafx;
 import java.util.List;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.AnchorPane;
 import model.Student;
 
 /**
  *
  * @author vlad
  */
-public class SearchingController {   
-    final private AnchorPane curentDialogAnchorPane;
+public class SearchingController {
     final private Button curentDialogOk;
-    final private String searchArgType;
-    final private List<Student> studentsList;
     
     public SearchingController(
-            AnchorPane curentDialogAnchorPane,
-            Button curentDialogOk,
-            List<Student> studentsList,
-            String searchArgType           
+            Button curentDialogOk    
     ){
-        this.curentDialogAnchorPane = curentDialogAnchorPane;
         this.curentDialogOk = curentDialogOk;        
-        this.studentsList = studentsList;
-        this.searchArgType = searchArgType;        
     }
     
-    public final void controlFullNameButton(List<TextField> nameTextFields){
-        curentDialogOk.setOnAction(findByNameAction -> { 
+    public final List<Student> controlSearchFullNameButton(
+            List<TextField> nameTextFields,
+            List<Student> studentsList,
+            String searchArgType
+    ){
+        
             TextField firstNameTextField = nameTextFields.get(0);
             TextField surNameTextField = nameTextFields.get(1);
             TextField lastNameTextField = nameTextFields.get(2);
@@ -56,35 +50,33 @@ public class SearchingController {
             List<Student> listOfFidingStudents 
                     = searching.findInformation(searchArg);
 
-            AnchorPane dialogTable = newDialogTable(listOfFidingStudents);
-            
-            curentDialogAnchorPane.getChildren().add(dialogTable);
-        });
-        
+            return listOfFidingStudents;
     }
 
-    public final void controlNumberOfRelativesButton(TextField numberTextField){
-        curentDialogOk.setOnAction(findByNumberOfRelativesAction -> {
+    public final List<Student> controlSearchNumberOfRelativesButton(
+            TextField numberTextField,
+            List<Student> studentsList,
+            String searchArgType
+    ){      
+        String relativesNumber = numberTextField.getText();
+        String searchArg = relativesNumber;
 
-            String relativesNumber = numberTextField.getText();
-            String searchArg = relativesNumber;
+        SearchingAlgorithms searching = new SearchingAlgorithms(
+                studentsList,
+                searchArgType
+        );
 
-            SearchingAlgorithms searching = new SearchingAlgorithms(
-                    studentsList,
-                    searchArgType
-            );
+        List<Student> listOfFidingStudents 
+                = searching.findInformation(searchArg);
 
-            List<Student> listOfFidingStudents 
-                    = searching.findInformation(searchArg);
-
-            AnchorPane dialogTable = newDialogTable(listOfFidingStudents);
-        });
-        
+        return listOfFidingStudents;       
     }
     
-    public final void controlSalaryLowerLimitButton(List<TextField> salaryTextFields){
-        curentDialogOk.setOnAction(findByLowerLimitOfSalaryAction -> {
-
+    public final List<Student> controlSearchSalaryLowerLimitButton(
+            List<TextField> salaryTextFields,
+            List<Student> studentsList,
+            String searchArgType
+    ){
             TextField lowerSalaryRublesTextField = salaryTextFields.get(0);
             TextField lowerSalaryPennyTextField = salaryTextFields.get(1);
             
@@ -103,24 +95,55 @@ public class SearchingController {
             List<Student> listOfFidingStudents 
                     = searching.findInformation(searchArg);
 
-            AnchorPane dialogTable = newDialogTable(listOfFidingStudents);
-        });
-        
+            return listOfFidingStudents;
     }
     
-    public final void controlSalaryUpperLimitButton(List<TextField> salaryTextFields){
-        curentDialogOk.setOnAction(findByLowerLimitOfSalaryAction -> {
+    public final List<Student> controlSearchSalaryUpperLimitButton(
+            List<TextField> salaryTextFields,
+            List<Student> studentsList,
+            String searchArgType
+    ){
+        TextField upperSalaryRublesTextField = salaryTextFields.get(0);
+        TextField upperSalaryPennyTextField = salaryTextFields.get(1);
 
-            TextField upperSalaryRublesTextField = salaryTextFields.get(0);
-            TextField upperSalaryPennyTextField = salaryTextFields.get(1);
+        String salaryRubles = upperSalaryRublesTextField.getText();
+        String salaryPenny = upperSalaryPennyTextField.getText();
+
+        String salary = salaryRubles + "." + salaryPenny;
+
+        String searchArg = salary;
+
+        SearchingAlgorithms searching = new SearchingAlgorithms(
+                studentsList,
+                searchArgType
+        );
+
+        List<Student> listOfFidingStudents 
+                = searching.findInformation(searchArg);
+
+        return listOfFidingStudents;
+    }
+    
+    public final List<Student> controlSearchSalaryBothLimitsButton(
+            List<TextField> salaryTextFields,
+            List<Student> studentsList,
+            String searchArgType){
+                  
+            TextField bothLowerSalaryRublesTextField = salaryTextFields.get(0);
+            TextField bothLowerSalaryPennyTextField = salaryTextFields.get(1);
+            TextField bothUpperSalaryRublesTextField = salaryTextFields.get(2);
+            TextField bothUpperSalaryPennyTextField = salaryTextFields.get(3);
             
-            String salaryRubles = upperSalaryRublesTextField.getText();
-            String salaryPenny = upperSalaryPennyTextField.getText();
+            String lowerSalaryRubles = bothLowerSalaryRublesTextField.getText();
+            String lowerSalaryPenny = bothLowerSalaryPennyTextField.getText();
+            String upperSalaryRubles = bothUpperSalaryRublesTextField.getText();
+            String upperSalaryPenny = bothUpperSalaryPennyTextField.getText();
 
-            String salary = salaryRubles + "." + salaryPenny;
+            String salary = lowerSalaryRubles + "." + lowerSalaryPenny + ","
+                          + upperSalaryRubles + "." + upperSalaryPenny;
 
             String searchArg = salary;
-
+            
             SearchingAlgorithms searching = new SearchingAlgorithms(
                     studentsList,
                     searchArgType
@@ -129,38 +152,9 @@ public class SearchingController {
             List<Student> listOfFidingStudents 
                     = searching.findInformation(searchArg);
 
-            AnchorPane dialogTable = newDialogTable(listOfFidingStudents);
-        });
+            return listOfFidingStudents;
     }
     
-    private AnchorPane newDialogTable(List<Student> listOfFidingStudents){
 
-        AnchorPane dialogTable = new PaginationTableBuilder()
-                .createPaginationTable(listOfFidingStudents);
-        
-        curentDialogAnchorPane.getChildren().add(dialogTable);
-        
-        AnchorPane.setLeftAnchor(dialogTable, 0.0);
-        AnchorPane.setBottomAnchor(dialogTable, 0.0);
-        
-        switch(searchArgType){
-            case "Students FIO": 
-            case "Father FIO":
-            case "Mother FIO":
-            case "Father salary by lower limit":
-            case "Father salary by upper limit":
-            case "Mother salary by lower limit":
-            case "Mother salary by upper limit":
-                AnchorPane.setTopAnchor(dialogTable, 120.0);
-            case "Number of brothers":
-            case "Number of sisters":
-                AnchorPane.setTopAnchor(dialogTable, 40.0);           
-            case "Father salary by both limits":
-            case "Mother salary by both limits":
-                AnchorPane.setTopAnchor(dialogTable, 160.0);
-        }
-        
-        return dialogTable;
-    }
     
 }
