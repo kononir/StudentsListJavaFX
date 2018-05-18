@@ -23,7 +23,7 @@ public class DeletingController {
         this.curentDialogOk = curentDialogOk;        
     }
     
-    public final List<Student> controlDeleteFullNameButton(
+    public final List<Student> controlFullNameDeleteButton(
             List<TextField> nameTextFields,
             List<Student> studentsList,
             String searchArgType
@@ -33,6 +33,90 @@ public class DeletingController {
         
         List<Student> listOfFidingStudents
                 = nameSearchingController.controlSearchFullNameButton(
+                        nameTextFields,
+                        studentsList,
+                        searchArgType
+                );
+        
+        List<Student> newStudentsList
+                = deleteStudents(studentsList, listOfFidingStudents);
+        
+        return newStudentsList;
+    }
+    
+    public final List<Student> controlSearchNumberOfRelativesButton(
+            TextField nameTextField,
+            List<Student> studentsList,
+            String searchArgType
+    ){
+        SearchingController nameSearchingController
+                = new SearchingController(curentDialogOk);
+        
+        List<Student> listOfFidingStudents
+                = nameSearchingController.controlSearchNumberOfRelativesButton(
+                        nameTextField,
+                        studentsList,
+                        searchArgType
+                );
+        
+        List<Student> newStudentsList
+                = deleteStudents(studentsList, listOfFidingStudents);
+        
+        return newStudentsList;
+    }
+    
+    public final List<Student> controlSearchSalaryLowerLimitButton(
+            List<TextField> nameTextFields,
+            List<Student> studentsList,
+            String searchArgType
+    ){
+        SearchingController nameSearchingController
+                = new SearchingController(curentDialogOk);
+        
+        List<Student> listOfFidingStudents
+                = nameSearchingController.controlSearchSalaryLowerLimitButton(
+                        nameTextFields,
+                        studentsList,
+                        searchArgType
+                );
+        
+        List<Student> newStudentsList
+                = deleteStudents(studentsList, listOfFidingStudents);
+        
+        return newStudentsList;
+    }
+    
+    public final List<Student> controlSearchSalaryUpperLimitButton(
+            List<TextField> nameTextFields,
+            List<Student> studentsList,
+            String searchArgType
+    ){
+        SearchingController nameSearchingController
+                = new SearchingController(curentDialogOk);
+        
+        List<Student> listOfFidingStudents
+                = nameSearchingController.controlSearchSalaryUpperLimitButton(
+                        nameTextFields,
+                        studentsList,
+                        searchArgType
+                );
+        
+        List<Student> newStudentsList
+                = deleteStudents(studentsList, listOfFidingStudents);
+        
+        return newStudentsList;
+    }
+    
+    public final List<Student> controlSearchSalaryBothLimitsButton(
+            List<TextField> nameTextFields,
+            List<Student> studentsList,
+            String searchArgType
+    ){
+        SearchingController nameSearchingController
+                = new SearchingController(curentDialogOk);
+        
+        List<Student> listOfFidingStudents
+                = nameSearchingController.controlSearchSalaryBothLimitsButton(
                         nameTextFields,
                         studentsList,
                         searchArgType

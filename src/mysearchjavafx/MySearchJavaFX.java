@@ -186,7 +186,364 @@ public class MySearchJavaFX extends Application {
                 
                 @Override
                 public void accept(String answer) {
+                    Stage curentDialogStage = new Stage();
                     
+                    curentDialogAnchorPane = new AnchorPane();
+                    
+                    List<HBox> hBoxesOfCurrentDialog = new ArrayList();
+                    
+                    Button curentDialogOk = new Button("OK");
+                    
+                    Button curentDialogCancel = new Button("Cancel");
+                    curentDialogCancel.setOnAction(action2 -> {
+                        curentDialogStage.close();
+                    });
+                    
+                    switch(answer){
+                        case "Students FIO":
+                        case "Father FIO":
+                        case "Mother FIO":
+                            Label firstNameLabel = new Label("First name");
+                            TextField firstNameTextField = new TextField();
+                            hBoxesOfCurrentDialog.add(makeNewHBox(
+                                    firstNameLabel,
+                                    firstNameTextField,
+                                    63
+                            ));
+                            
+                            Label surNameLabel = new Label("Surname");
+                            TextField surNameTextField = new TextField();
+                            hBoxesOfCurrentDialog.add(makeNewHBox(
+                                    surNameLabel,
+                                    surNameTextField,
+                                    70
+                            ));
+                            
+                            Label lastNameLabel = new Label("Last name");
+                            TextField lastNameTextField = new TextField();
+                            hBoxesOfCurrentDialog.add(makeNewHBox(
+                                    lastNameLabel,
+                                    lastNameTextField,
+                                    63
+                            ));
+                            
+                            curentDialogOk.setOnAction(findByNameAction -> {
+                                DeletingController nameSearchingController
+                                        = new DeletingController(
+                                                curentDialogOk
+                                        );
+                                
+                                List<TextField> dialogNameTextFields = Arrays.asList(
+                                        firstNameTextField,
+                                        surNameTextField,
+                                        lastNameTextField
+                                );
+                                
+                                int oldStudentsListSize = studentsList.size();
+                                
+                                List<Student> listOfRemainingStudents 
+                                        = nameSearchingController.controlFullNameDeleteButton(
+                                                dialogNameTextFields,
+                                                studentsList,
+                                                answer
+                                        );
+                                
+                                int newStudentsListSize = studentsList.size();
+                                
+                                Label deletingNumberLabel = makeResultDeleting(
+                                        oldStudentsListSize,
+                                        newStudentsListSize
+                                );
+                                
+                                curentDialogAnchorPane.getChildren()
+                                                    .add(deletingNumberLabel);
+
+                                AnchorPane deleteTable = paginationTableBuilder
+                                        .createPaginationTable(studentsList);
+                                updateTable(deleteTable, mainPane);
+                            });
+                            
+                            break;
+                        case "Number of brothers":
+                        case "Number of sisters":
+                            Label numberLabel = new Label("Number");
+                            TextField numberTextField = new TextField();
+                            hBoxesOfCurrentDialog.add(makeNewHBox(
+                                    numberLabel,
+                                    numberTextField,
+                                    25
+                            ));
+                            
+                            curentDialogOk.setOnAction(findByNumberOfRelativesAction -> {
+                                DeletingController relativesSearchingController
+                                        = new DeletingController(
+                                                curentDialogOk
+                                        );
+                                
+                                int oldStudentsListSize = studentsList.size();
+
+                                List<Student> listOfRemainingStudents
+                                        = relativesSearchingController
+                                                .controlSearchNumberOfRelativesButton(
+                                                        numberTextField,
+                                                        studentsList,
+                                                        answer
+                                                );
+
+                                int newStudentsListSize = studentsList.size();
+                                
+                                Label deletingNumberLabel = makeResultDeleting(
+                                        oldStudentsListSize,
+                                        newStudentsListSize
+                                );
+                                
+                                curentDialogAnchorPane.getChildren()
+                                        .add(deletingNumberLabel);
+
+                                AnchorPane deleteTable = paginationTableBuilder
+                                        .createPaginationTable(studentsList);
+                                updateTable(deleteTable, mainPane);
+                            });
+                            
+                            break;
+                        case "Father salary":
+                        case "Mother salary":
+                            ChoiceDialog<String> searchLimitChoiceDialog = new ChoiceDialog(
+                                    "by lower limit",
+                                    "by lower limit",
+                                    "by upper limit",
+                                    "by both limits"
+                            );
+                            searchLimitChoiceDialog.setTitle("JavaFX");
+                            searchLimitChoiceDialog.setHeaderText(null);
+                            searchLimitChoiceDialog.setContentText("Please, choice searching argument:");
+                            
+                            Optional<String> answerLimitOptional
+                                    = searchLimitChoiceDialog.showAndWait();
+                            
+                            answerLimitOptional.ifPresent(answerLimit -> {
+                                
+                                String searchArgType = answer + " " + answerLimit;
+                                
+                                switch(answerLimit){
+                                    case("by lower limit"):
+                                        Label lowerSalaryRublesLabel = new Label("Lower limit, rubles");
+                                        TextField lowerSalaryRublesTextField = new TextField();
+                                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                                lowerSalaryRublesLabel,
+                                                lowerSalaryRublesTextField,
+                                                53
+                                        ));
+                                        
+                                        Label lowerSalaryPennyLabel = new Label("Lower limit, penny");
+                                        TextField lowerSalaryPennyTextField = new TextField();
+                                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                                lowerSalaryPennyLabel,
+                                                lowerSalaryPennyTextField,
+                                                51
+                                        ));
+                                        
+                                        curentDialogOk.setOnAction(findByLowerLimitOfSalaryAction -> {
+                                            DeletingController lowerLimitSalarySearchingController
+                                                    = new DeletingController(
+                                                            curentDialogOk
+                                                    );
+
+                                            List<TextField> dialogSalaryLowerLimitTextFields
+                                                    = Arrays.asList(
+                                                            lowerSalaryRublesTextField,
+                                                            lowerSalaryPennyTextField
+                                                    );
+                                            
+                                            int oldStudentsListSize = studentsList.size();
+
+                                            List<Student> listOfRemainingStudents
+                                                    = lowerLimitSalarySearchingController
+                                                    .controlSearchSalaryLowerLimitButton(
+                                                            dialogSalaryLowerLimitTextFields,
+                                                            studentsList,
+                                                            searchArgType
+                                                    );
+                                            
+                                            int newStudentsListSize = studentsList.size();
+                                
+                                            Label deletingNumberLabel = makeResultDeleting(
+                                                    oldStudentsListSize,
+                                                    newStudentsListSize
+                                            );
+                                            
+                                            curentDialogAnchorPane.getChildren()
+                                                    .add(deletingNumberLabel);
+                                            
+                                            AnchorPane deleteTable = paginationTableBuilder
+                                                    .createPaginationTable(studentsList);
+                                            updateTable(deleteTable, mainPane);
+                                        });
+                                        
+                                        break;
+                                        
+                                    case("by upper limit"):
+                                        Label upperSalaryRublesLabel = new Label("Upper limit, rubles");
+                                        TextField upperSalaryRublesTextField = new TextField();
+                                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                                upperSalaryRublesLabel,
+                                                upperSalaryRublesTextField,
+                                                53
+                                        ));
+                                        
+                                        Label upperSalaryPennyLabel = new Label("Upper limit, penny");
+                                        TextField upperSalaryPennyTextField = new TextField();
+                                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                                upperSalaryPennyLabel,
+                                                upperSalaryPennyTextField,
+                                                51
+                                        ));
+                                        
+                                        curentDialogOk.setOnAction(findByUpperLimitOfSalaryAction -> {
+                                            DeletingController upperLimitSalarySearchingController
+                                                    = new DeletingController(
+                                                            curentDialogOk
+                                                    );
+
+                                            List<TextField> dialogSalaryUpperLimitTextFields
+                                                    = Arrays.asList(
+                                                            upperSalaryRublesTextField,
+                                                            upperSalaryPennyTextField
+                                                    );
+                                            
+                                            int oldStudentsListSize = studentsList.size();
+
+                                            List<Student> listOfRemainingStudents
+                                                    = upperLimitSalarySearchingController
+                                                    .controlSearchSalaryUpperLimitButton(
+                                                            dialogSalaryUpperLimitTextFields,
+                                                            studentsList,
+                                                            searchArgType
+                                                    );
+
+                                            int newStudentsListSize = studentsList.size();
+                                
+                                            Label deletingNumberLabel = makeResultDeleting(
+                                                    oldStudentsListSize,
+                                                    newStudentsListSize
+                                            );
+                                            
+                                            curentDialogAnchorPane.getChildren()
+                                                    .add(deletingNumberLabel);
+                                            
+                                            AnchorPane deleteTable = paginationTableBuilder
+                                                    .createPaginationTable(studentsList);
+                                            updateTable(deleteTable, mainPane);
+                                        });
+                                        
+                                        break;
+                                        
+                                    case("by both limits"):
+                                        Label bothLowerSalaryRublesLabel
+                                                = new Label("Lower limit, rubles");
+                                        TextField bothLowerSalaryRublesTextField
+                                                = new TextField();
+                                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                                bothLowerSalaryRublesLabel,
+                                                bothLowerSalaryRublesTextField,
+                                                53
+                                        ));
+                                        
+                                        Label bothLowerSalaryPennyLabel
+                                                = new Label("Lower limit, penny");
+                                        TextField bothLowerSalaryPennyTextField
+                                                = new TextField();
+                                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                                bothLowerSalaryPennyLabel,
+                                                bothLowerSalaryPennyTextField,
+                                                51
+                                        ));
+                                        
+                                        Label bothUpperSalaryRublesLabel
+                                                = new Label("Upper limit, rubles");
+                                        TextField bothUpperSalaryRublesTextField
+                                                = new TextField();
+                                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                                bothUpperSalaryRublesLabel,
+                                                bothUpperSalaryRublesTextField,
+                                                53
+                                        ));
+                                        
+                                        Label bothUpperSalaryPennyLabel
+                                                = new Label("Upper limit, penny");
+                                        TextField bothUpperSalaryPennyTextField
+                                                = new TextField();
+                                        hBoxesOfCurrentDialog.add(makeNewHBox(
+                                                bothUpperSalaryPennyLabel,
+                                                bothUpperSalaryPennyTextField,
+                                                51
+                                        ));
+                                        
+                                        curentDialogOk.setOnAction(findByBothLimitsOfSalaryAction -> {
+                                            DeletingController bothLimitsSalarySearchingController
+                                                    = new DeletingController(
+                                                            curentDialogOk
+                                                    );
+
+                                            List<TextField> dialogSalaryBothLimitsTextFields
+                                                    = Arrays.asList(
+                                                            bothLowerSalaryRublesTextField,
+                                                            bothLowerSalaryPennyTextField,
+                                                            bothUpperSalaryRublesTextField,
+                                                            bothUpperSalaryPennyTextField
+                                                    );
+                                            
+                                            int oldStudentsListSize = studentsList.size();
+
+                                            List<Student> listOfRemainingStudents
+                                                    = bothLimitsSalarySearchingController
+                                                    .controlSearchSalaryBothLimitsButton(
+                                                            dialogSalaryBothLimitsTextFields,
+                                                            studentsList,
+                                                            searchArgType
+                                                    );
+                                            
+                                            int newStudentsListSize = studentsList.size();
+                                
+                                            Label deletingNumberLabel = makeResultDeleting(
+                                                    oldStudentsListSize,
+                                                    newStudentsListSize
+                                            );
+                                            
+                                            curentDialogAnchorPane.getChildren()
+                                                    .add(deletingNumberLabel);
+                                            
+                                            AnchorPane deleteTable = paginationTableBuilder
+                                                    .createPaginationTable(studentsList);
+                                            updateTable(deleteTable, mainPane);
+                                        });
+                                        
+                                        break;
+                                }
+                                
+                            });
+                            
+                            break;
+                    }
+                    
+                    VBox curentDialogVBox = makeNewDialogVBox(hBoxesOfCurrentDialog);
+                    
+                    HBox currentDialogHBoxWithButtons = makeDialogHBoxWithButtons(
+                            curentDialogOk,
+                            curentDialogCancel
+                    );
+                    
+                    curentDialogAnchorPane = newDialogPane(
+                            curentDialogVBox,
+                            currentDialogHBoxWithButtons
+                    );
+                    
+                    ScrollPane scroll = newDialogScroling(curentDialogAnchorPane);
+                    
+                    Scene curentDialogScene = new Scene(scroll, 600, 500);
+                    curentDialogStage.setTitle(answer);
+                    curentDialogStage.setScene(curentDialogScene);
+                    curentDialogStage.show();
                 }
             });
         });
@@ -752,185 +1109,18 @@ public class MySearchJavaFX extends Application {
         mainPane.getChildren().add(newTable);
     }
     
-    private void makeSearchingDialog(String answer){
-        Stage curentDialogStage = new Stage();
-
-        AnchorPane curentDialogAnchorPane;
-
-        List<HBox> hBoxesOfCurrentDialog = new ArrayList();
-
-        Button curentDialogOk = new Button("OK");
-
-        Button curentDialogCancel = new Button("Cancel");
-        curentDialogCancel.setOnAction(action2 -> {
-            curentDialogStage.close();
-        });
+    private Label makeResultDeleting(int oldStudentsListSize, int newStudentsListSize){
+        Label deletingNumberLabel = new Label();
         
-        VBox curentDialogVBox = makeNewDialogVBox(hBoxesOfCurrentDialog);
-
-        HBox currentDialogHBoxWithButtons = makeDialogHBoxWithButtons(
-                curentDialogOk,
-                curentDialogCancel
-        );
-
-        curentDialogAnchorPane = newDialogPane(
-                curentDialogVBox,
-                currentDialogHBoxWithButtons
-        );
-
-        ScrollPane scroll = newDialogScroling(curentDialogAnchorPane);
-
-        Scene curentDialogScene = new Scene(scroll, 600, 500);
-        curentDialogStage.setTitle(answer);
-        curentDialogStage.setScene(curentDialogScene);
-
-        switch(answer){
-            case "Students FIO":
-            case "Father FIO":
-            case "Mother FIO":
-                Label firstNameLabel = new Label("First name");
-                TextField firstNameTextField = new TextField();
-                hBoxesOfCurrentDialog.add(makeNewHBox(
-                        firstNameLabel,
-                        firstNameTextField,
-                        63
-                ));
-
-                Label surNameLabel = new Label("Surname");
-                TextField surNameTextField = new TextField();
-                hBoxesOfCurrentDialog.add(makeNewHBox(
-                        surNameLabel,
-                        surNameTextField,
-                        70
-                ));
-
-                Label lastNameLabel = new Label("Last name");
-                TextField lastNameTextField = new TextField();
-                hBoxesOfCurrentDialog.add(makeNewHBox(
-                        lastNameLabel,
-                        lastNameTextField,
-                        63
-                ));
-
-                break;
-            case "Number of brothers":
-            case "Number of sisters":
-                Label numberLabel = new Label("Number");
-                TextField numberTextField = new TextField();
-                hBoxesOfCurrentDialog.add(makeNewHBox(
-                        numberLabel,
-                        numberTextField,
-                        25
-                ));
-
-                break;
-            case "Father salary":
-            case "Mother salary":
-                ChoiceDialog<String> searchLimitChoiceDialog = new ChoiceDialog(
-                        "by lower limit",
-                        "by lower limit",
-                        "by upper limit",
-                        "by both limits"
-                );
-                searchLimitChoiceDialog.setTitle("JavaFX");
-                searchLimitChoiceDialog.setHeaderText(null);
-                searchLimitChoiceDialog.setContentText("Please, choice searching argument:");
-
-                Optional<String> answerLimitOptional
-                        = searchLimitChoiceDialog.showAndWait();
-
-                answerLimitOptional.ifPresent(answerLimit -> {
-
-                    String searchArgType = answer + " " + answerLimit;
-
-                    switch(answerLimit){
-                        case("by lower limit"):
-                            Label lowerSalaryRublesLabel = new Label("Lower limit, rubles");
-                            TextField lowerSalaryRublesTextField = new TextField();
-                            hBoxesOfCurrentDialog.add(makeNewHBox(
-                                    lowerSalaryRublesLabel,
-                                    lowerSalaryRublesTextField,
-                                    53
-                            ));
-
-                            Label lowerSalaryPennyLabel = new Label("Lower limit, penny");
-                            TextField lowerSalaryPennyTextField = new TextField();
-                            hBoxesOfCurrentDialog.add(makeNewHBox(
-                                    lowerSalaryPennyLabel,
-                                    lowerSalaryPennyTextField,
-                                    51
-                            ));
-
-                            break;
-
-                        case("by upper limit"):
-                            Label upperSalaryRublesLabel = new Label("Upper limit, rubles");
-                            TextField upperSalaryRublesTextField = new TextField();
-                            hBoxesOfCurrentDialog.add(makeNewHBox(
-                                    upperSalaryRublesLabel,
-                                    upperSalaryRublesTextField,
-                                    53
-                            ));
-
-                            Label upperSalaryPennyLabel = new Label("Upper limit, penny");
-                            TextField upperSalaryPennyTextField = new TextField();
-                            hBoxesOfCurrentDialog.add(makeNewHBox(
-                                    upperSalaryPennyLabel,
-                                    upperSalaryPennyTextField,
-                                    51
-                            ));
-
-                            break;
-
-                        case("by both limits"):
-                            Label bothLowerSalaryRublesLabel
-                                    = new Label("Lower limit, rubles");
-                            TextField bothLowerSalaryRublesTextField
-                                    = new TextField();
-                            hBoxesOfCurrentDialog.add(makeNewHBox(
-                                    bothLowerSalaryRublesLabel,
-                                    bothLowerSalaryRublesTextField,
-                                    53
-                            ));
-
-                            Label bothLowerSalaryPennyLabel
-                                    = new Label("Lower limit, penny");
-                            TextField bothLowerSalaryPennyTextField
-                                    = new TextField();
-                            hBoxesOfCurrentDialog.add(makeNewHBox(
-                                    bothLowerSalaryPennyLabel,
-                                    bothLowerSalaryPennyTextField,
-                                    51
-                            ));
-
-                            Label bothUpperSalaryRublesLabel
-                                    = new Label("Upper limit, rubles");
-                            TextField bothUpperSalaryRublesTextField
-                                    = new TextField();
-                            hBoxesOfCurrentDialog.add(makeNewHBox(
-                                    bothUpperSalaryRublesLabel,
-                                    bothUpperSalaryRublesTextField,
-                                    53
-                            ));
-
-                            Label bothUpperSalaryPennyLabel
-                                    = new Label("Upper limit, penny");
-                            TextField bothUpperSalaryPennyTextField
-                                    = new TextField();
-                            hBoxesOfCurrentDialog.add(makeNewHBox(
-                                    bothUpperSalaryPennyLabel,
-                                    bothUpperSalaryPennyTextField,
-                                    51
-                            ));
-
-                            break;
-                    }
-
-                });
-
-                break;
+        if(oldStudentsListSize > newStudentsListSize){
+            int differenceNumberOfRecords = oldStudentsListSize - newStudentsListSize;
+            deletingNumberLabel.setText(String.valueOf(differenceNumberOfRecords)
+                                        + " records deleted!");
         }
-
-        curentDialogStage.show();
+        else
+            deletingNumberLabel.setText("No one of the records didn't delete!");
+        
+        return deletingNumberLabel;
     }
+    
 }
